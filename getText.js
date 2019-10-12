@@ -33,11 +33,18 @@ function walkNodeTree(root, options) {
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    // if(window.hateSpeechOn){
-        var allText = textNodesUnder(document.body); //visit the dom
-        for (i = 0; i < allText.length; i++) {
-            allText[i].parentNode.style.color = "#000080"; 
-        } 
-        // alert("loaded new info!");
-    // }
+  function onError(error) {
+    alert(`Error: ${error}`);
+  }
+
+  function onGot(item) {
+    if(item.HateSpeechOn){
+      var allText = textNodesUnder(document.body); //visit the dom
+      for (i = 0; i < allText.length; i++) {
+          allText[i].parentNode.style.color = "#000080";
+      }
+    }
+  }
+  var getting = browser.storage.sync.get("HateSpeechOn");
+  getting.then(onGot, onError);
 });

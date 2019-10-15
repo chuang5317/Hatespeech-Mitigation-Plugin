@@ -3,12 +3,12 @@ jobs:
   build:
     working_directory: ~/plugin
     docker:
-      - image: circleci/python:3.6.9-stretch
+      - image: circleci/python:stretch
     steps:
       - checkout
   test:
     docker:
-      - image: circleci/python:3.6.9-stretch
+      - image: circleci/python:stretch
     steps:
       - checkout
       - run:

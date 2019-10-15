@@ -15,7 +15,12 @@ jobs:
           command: |
             cd hatespeech_backend/
             sudo pip install -r requirements.txt
-            python -m pytest -s tests/
+            pytest
+            coverage run -m pytest
+            coverage report
+            coverage html
+      - store_artifacts:
+          path: htmlcov
 workflows:
   version: 2
   build_and_test:

@@ -5,8 +5,8 @@ function walkNodeTree(root) {
     start: while (node) {
         if(node.nodeType === Node.TEXT_NODE && !['STYLE', 'SCRIPT'].includes(node.nodeName)){
           parent = node.parentNode;
-          if(parent.firstChild != parent.lastChild || parent.nodeName == 'P'){ //more than 1 child (the text) or is paragraph
-            nodes.push(node.parentNode);
+          if(parent.firstChild != parent.lastChild || !['P'].includes(parent.nodeName)){ //more than 1 child (the text) or is paragraph
+            nodes.push(parent);
           }
         } else{
             if (node.firstChild) {
@@ -30,6 +30,9 @@ function walkNodeTree(root) {
     return nodes;
 }
 
+//TODO: 1. find a way to remove useless parent nodes -- otherwise we may read same content multiple times
+//2. deal with new contents on the page -- example : stack overflow expand comments, reddit 
+//we may want to consider doing this plugin just for a specific website?
 
 document.addEventListener('DOMContentLoaded', (event) => {
   function onError(error) {

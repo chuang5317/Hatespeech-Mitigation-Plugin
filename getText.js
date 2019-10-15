@@ -4,7 +4,10 @@ function walkNodeTree(root) {
     node = root;
     start: while (node) {
         if(node.nodeType === Node.TEXT_NODE && !['STYLE', 'SCRIPT'].includes(node.nodeName)){
+          parent = node.parentNode;
+          if(parent.firstChild != parent.lastChild || parent.nodeName == 'P'){ //more than 1 child (the text) or is paragraph
             nodes.push(node.parentNode);
+          }
         } else{
             if (node.firstChild) {
               node = node.firstChild;
@@ -34,12 +37,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
   }
 
   function onGot(item) {
-    // if(item.HateSpeechOn){
+    if(item.HateSpeechOn){
       var allText = walkNodeTree(document.body); //visit the dom
       for (i = 0; i < allText.length; i++) {
           allText[i].style.color = getRandomColor();
       }
-    // }
+    }
   }
   var getting = browser.storage.sync.get("HateSpeechOn");
   getting.then(onGot, onError);

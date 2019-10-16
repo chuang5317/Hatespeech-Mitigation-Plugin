@@ -4,10 +4,7 @@ function walkNodeTree(root) {
     node = root;
     start: while (node) {
         if(node.nodeType === Node.TEXT_NODE && !['STYLE', 'SCRIPT'].includes(node.nodeName)){
-          parent = node.parentNode;
-          if(parent.firstChild != parent.lastChild || !['P'].includes(parent.nodeName)){ //more than 1 child (the text) or is paragraph
-            nodes.push(parent);
-          }
+            nodes.push(node);
         } else{
             if (node.firstChild) {
               node = node.firstChild;
@@ -27,10 +24,20 @@ function walkNodeTree(root) {
             node = node.parentNode;
         }
     }
-    return nodes;
+    remove = [];
+    nodes.forEach((n) => {
+      p = n.parentNode.parentNode.parentNode;
+      if(nodes.includes(p)){
+        remove.push(p);
+      }
+    });
+    return nodes.filter(function(n){
+      return !remove.includes(n);
+    });
+    // return nodes;
 }
 
-//TODO: 1. find a way to remove useless parent nodes -- otherwise we may read same content multiple times
+//TODO: 1. API for back end -- failed to remove parent nodes, use stream of text
 //2. deal with new contents on the page -- example : stack overflow expand comments, reddit 
 //we may want to consider doing this plugin just for a specific website?
 
@@ -41,9 +48,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
   function onGot(item) {
     if(item.HateSpeechOn){
+      var style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = '.blurry-text {\nfilter:blur(2px);\n}';
+      document.getElementsByTagName('head')[0].appendChild(style);
       var allText = walkNodeTree(document.body); //visit the dom
       for (i = 0; i < allText.length; i++) {
-          allText[i].style.color = getRandomColor();
+          allText[i].parentNode.classList.add('blurry-text');
+          allText[i].parentNode.style.color = getRandomColor();
       }
     }
   }

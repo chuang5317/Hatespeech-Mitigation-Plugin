@@ -1,30 +1,23 @@
 const detect_new_content = function(mutations) {
   mutations.forEach(function(mutation) {
     for (var i = 0; i < mutation.addedNodes.length; i++) {
-      console.log(mutation.addedNodes[i]);
-      // Create an observer instance linked to the callback function
-      const observer = new MutationObserver(detect_new_content);
-      // Start observing the target node for configured mutations
-      observer.observe(mutation.addedNodes[i], {childList: true});
-      hatespeech_detection(mutation.addedNodes[i]);
+        hatespeech_detection(mutation.addedNodes[i]);
     }
   });
 };
-
 //visited once per page
 function walkNodeTree(root) {
   const nodes = []; 
   node = root;
   start: while (node) {
-      // Create an observer instance linked to the callback function
-      const observer = new MutationObserver(detect_new_content);
-      // Start observing the target node for configured mutations
-      observer.observe(document.body, {childList: true});
-      // Later, you can stop observing
-      // observer.disconnect();
       if(node.nodeType === Node.TEXT_NODE && !['STYLE', 'SCRIPT'].includes(node.nodeName)){
           nodes.push(node);
       } else{
+          const observer = new MutationObserver(detect_new_content);
+          // Start observing the target node for configured mutations
+          observer.observe(node, {childList: true});
+          // Later, you can stop observing
+          // observer.disconnect();
           if (node.firstChild) {
             node = node.firstChild;
             continue start;
@@ -58,17 +51,17 @@ function hatespeech_detection(root){
       var allText = walkNodeTree(root); //visit the dom
       str = ""
       for (i = 0; i < allText.length; i++) {
-          str = str + allText[i].nodeValue;
           allText[i].parentNode.style.color = getRandomColor();
+          str = str + allText[i].nodeValue;
       }
-      // console.log(str); //all the string on the webpage
+      console.log(str); //all the string on the webpage
       result = [234, 435];//call backend, get an array of intgers (the position of hate speech)
       pos = 0;
       hateSpeechIndex = 0;
       for(i = 0; i < allText.length; i++){
           pos += allText[i].length;
           if(pos >= result[hateSpeechIndex]){
-            // allText[i].parentNode.classList.add('blurry-text');
+            allText[i].parentNode.classList.add('blurry-text');
             hateSpeechIndex++;
           }
           if(hateSpeechIndex >= result.length){

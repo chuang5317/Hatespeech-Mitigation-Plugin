@@ -1,3 +1,14 @@
-# Hatespeech-Mitigation-Plugin
+Install spacy:
+    pip install -U spacy
 
-[![CircleCI](https://circleci.com/gh/chuang5317/Hatespeech-Mitigation-Plugin.svg?style=svg)](https://circleci.com/gh/chuang5317/Hatespeech-Mitigation-Plugin)
+Install required spacy modules :
+    python -m spacy download <module_name>
+
+spacy api:
+    https://spacy.io/api
+
+Install snorkel:
+    pip install snorkel
+
+Snorkel official: 
+    https://github.com/snorkel-team

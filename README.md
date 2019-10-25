@@ -1,8 +1,8 @@
 Install spacy:
     pip install -U spacy
 
-Install required spacy modules :
-    python -m spacy download <module_name>
+Install required spacy models :
+    python -m spacy download <model_name>
 
 spacy api:
     https://spacy.io/api

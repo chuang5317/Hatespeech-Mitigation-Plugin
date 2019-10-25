@@ -7,7 +7,7 @@ const detect_new_content = function(mutations) {
 };
 //visited once per page
 function walkNodeTree(root) {
-  const nodes = []; 
+  const nodes = [];
   node = root;
   start: while (node) {
       if(node.nodeType === Node.TEXT_NODE && !['STYLE', 'SCRIPT'].includes(node.nodeName)){
@@ -40,7 +40,7 @@ function walkNodeTree(root) {
 }
 
 //TODO: 1. API for back end -- failed to remove parent nodes, use stream of text
-//2. deal with new contents on the page -- example : stack overflow expand comments, reddit 
+//2. deal with new contents on the page -- example : stack overflow expand comments, reddit
 
 function hatespeech_detection(root){
   function onError(error) {
@@ -55,6 +55,12 @@ function hatespeech_detection(root){
           str = str + allText[i].nodeValue;
       }
       console.log(str); //all the string on the webpage
+
+      var request = new XMLHttpRequest();
+      request.open('POST', '/postmethod', true);
+      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      request.send(str);
+
       result = [234, 435];//call backend, get an array of intgers (the position of hate speech)
       pos = 0;
       hateSpeechIndex = 0;
@@ -77,7 +83,7 @@ function hatespeech_detection(root){
 document.addEventListener('DOMContentLoaded', (event) => {
   var style = document.createElement('style');
   style.type = 'text/css';
-  style.innerHTML = '.blurry-text {\nfilter:blur(5px);\n}\n' + 
+  style.innerHTML = '.blurry-text {\nfilter:blur(5px);\n}\n' +
                     '.blurry-text:hover {\nfilter:none;\n}';
   document.getElementsByTagName('head')[0].appendChild(style);
   hatespeech_detection(document.body);

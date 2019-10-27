@@ -57,9 +57,9 @@ function hatespeech_detection(root){
       console.log(str); //all the string on the webpage
 
       var request = new XMLHttpRequest();
-      request.open('POST', '/postmethod', true);
-      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-      request.send(str);
+      request.open('GET', '/getmethod', true);
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.send(JSON.stringify({"htmltext": str}));
 
       result = [234, 435];//call backend, get an array of intgers (the position of hate speech)
       pos = 0;

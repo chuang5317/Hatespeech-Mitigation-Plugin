@@ -2,6 +2,7 @@
 from http import HTTPStatus
 import pytest
 
+from flask import json
 from hatespeech_backend import server
 
 
@@ -17,3 +18,10 @@ def test_root_returns_greeting(client):
     response = client.get('/')
     assert response.status_code == HTTPStatus.OK, "HTTP request unsuccessful"
     assert response.data == b"Hello, World!"
+
+
+def test_get_method_returns_ok(client):
+    response = client.get('/getmethod')
+    assert response.status_code == HTTPStatus.OK, "HTTP request unsuccessful"
+    data = json.loads(response.data)
+    assert data == {"response": "OK"}

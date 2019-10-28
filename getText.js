@@ -49,17 +49,30 @@ function hatespeech_detection(root){
   function onGot(item) {
     if(item.HateSpeechOn){
       var allText = walkNodeTree(root); //visit the dom
-      str = ""
-      for (i = 0; i < allText.length; i++) {
+      let str = "";
+      for (let i = 0; i < allText.length; i++) {
           allText[i].parentNode.style.color = getRandomColor();
           str = str + allText[i].nodeValue;
       }
       console.log(str); //all the string on the webpage
 
-      var request = new XMLHttpRequest();
-      request.open('GET', '/getmethod', true);
-      request.setRequestHeader('Content-Type', 'application/json');
-      request.send(JSON.stringify({"htmltext": str}));
+      // Fetch the ranges to blur from the locally running service
+      const apiUrl = 'http://127.0.0.1:5000/getmethod';
+      let xhr = new XMLHttpRequest();
+
+      xhr.open('GET', apiUrl, true);
+      xhr.send(JSON.stringify({"htmltext": str}));
+      xhr.onprogress = () => {};
+      xhr.onload = () => {
+          if (xhr.status !== 200) {
+            console.log(`Error ${xhr.status}: ${xhr.statusText}`);
+          } else {
+            console.log(`Done, got ${xhr.response.length} bytes ${xhr.responseText}`);
+          }
+      };
+      xhr.onerror = () => {
+        console.log("Request failed");
+      };
 
       result = [234, 435];//call backend, get an array of intgers (the position of hate speech)
       pos = 0;

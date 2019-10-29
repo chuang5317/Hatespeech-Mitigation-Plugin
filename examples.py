@@ -1,7 +1,7 @@
 import labelingFunctions as lf 
 import preprocessing as pre
 
-# Get hate speech sentences : https://www.quora.com/What-are-some-examples-of-%E2%80%98hate-speech%E2%80%99-in-the-United-States-2017
+# Get hate speech sentences from: https://www.quora.com/What-are-some-examples-of-%E2%80%98hate-speech%E2%80%99-in-the-United-States-2017
 # Run this file and see what are the LFs doing
 print(lf.lf_neg_short(pre.spacy_nlp("ok")))
 print(lf.lf_keyword_strong_swearing(pre.spacy_nlp("fuck you!")))

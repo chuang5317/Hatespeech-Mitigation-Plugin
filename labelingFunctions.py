@@ -3,7 +3,7 @@ from snorkel.labeling import labeling_function
 import re
 import preprocessing as pre
 
-# All input parameters for labelling functions are Spacy doc.
+# All input parameters for labelling functions are Pandas DataFrame of spacy doc.
 
 # Define the label mappings for convenience
 ABSTAIN = 0
@@ -12,19 +12,22 @@ NEGATIVE = 2
 
 # Filtering none hatespeech text
 @labeling_function()
-def lf_neg_short(doc):
+def lf_neg_short(df):
+    doc = df.at[0]
     """Short text tends to be less hateful"""
     return NEGATIVE if len(doc) < 5 else ABSTAIN
 
 # Keywords matching
 @labeling_function()
-def lf_keyword_strong_swearing(doc):
+def lf_keyword_strong_swearing(df):
+    doc = df.at[0]
     strong_swearing = ["cunt", "fuck", "motherfucker", "bastard", "dickhead", "bellend"]
     return POSITIVE if any( word in doc.text for word in strong_swearing) else ABSTAIN
 
 # More complicated methods
 @labeling_function()
-def lf_spacy_adj_sexism(doc):
+def lf_spacy_adj_sexism(df):
+    doc = df.at[0]
     ''' Detects if negative adjectives are apeearing in the same doc with gender nouns'''
     gender_related_words = ["female", "male", "MtF", "FtM", "slut", "bitch", "boy", "girl"] # Add more ...
     if(any( word in doc.text for word in gender_related_words)):

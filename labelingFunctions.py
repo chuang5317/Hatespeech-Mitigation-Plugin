@@ -1,4 +1,4 @@
-#Labeling functions that could be used by snorkel --  or direcly as detection service 
+#Labeling functions that could be used by snorkel --  or direcly as detection service
 from snorkel.labeling import labeling_function
 import re
 import preprocessing as pre
@@ -19,14 +19,14 @@ def lf_neg_short(doc):
 # Keywords matching
 @labeling_function()
 def lf_keyword_strong_swearing(doc):
-    strong_swearing = ["cunt", "fuck", "motherfucker"]
+    strong_swearing = ["cunt", "fuck", "motherfucker", "bastard", "dickhead", "bellend"]
     return POSITIVE if any( word in doc.text for word in strong_swearing) else ABSTAIN
 
 # More complicated methods
 @labeling_function()
 def lf_spacy_adj_sexism(doc):
     ''' Detects if negative adjectives are apeearing in the same doc with gender nouns'''
-    gender_related_words = ["female", "male", "MtF", "FtM", "slut"] # Add more ...
+    gender_related_words = ["female", "male", "MtF", "FtM", "slut", "bitch", "boy", "girl"] # Add more ...
     if(any( word in doc.text for word in gender_related_words)):
         adjs = filter((lambda token: token.pos_ == "ADJ"), doc)
         for a in adjs:
@@ -38,5 +38,3 @@ def lf_spacy_adj_sexism(doc):
 
 
 # Other API result -- TODO : find suitable api and let them be LF as well
-
-

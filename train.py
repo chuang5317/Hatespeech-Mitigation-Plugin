@@ -13,7 +13,7 @@ ABSTAIN = 0
 POSITIVE = 1
 NEGATIVE = 2
 
-df_train = ds.get_E6oV3lV()
+df_train = ds.get_debug()
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence] # and one more in order to run ...
@@ -28,7 +28,7 @@ label_model = LabelModel(cardinality=3, verbose=True)
 label_model.fit(L_train, n_epochs=500, log_freq=50, seed=123)
 df_train["label"] = label_model.predict(L=L_train, tie_break_policy="abstain")
 # Filter out useless data
-df_train = df_train[df_train.label != ABSTAIN]
+# df_train = df_train[df_train.label != ABSTAIN]
 print("Useful data remaining: " + str(df_train.shape[0]))
 
 # Ignoring Transformation Functions for Data Augmentation for now...
@@ -39,10 +39,13 @@ print("Useful data remaining: " + str(df_train.shape[0]))
 
 # Training a Classifier
 docs = df_train.iloc[:,0].tolist() # first column of data frame (first_name)
+print(df_train)
+
 train_text = []
 for doc in docs:
-    print(doc)
+    # print(doc.text)
     train_text.append(doc.text)
+print(train_text)
 
 X_train = CountVectorizer(ngram_range=(1, 2)).fit_transform(train_text)
 

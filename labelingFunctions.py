@@ -12,24 +12,21 @@ NEGATIVE = 2
 
 # Filtering none hatespeech text
 @labeling_function()
-def lf_neg_short(df):
-    doc = df.at[0]
+def lf_neg_short(doc):
     """Short text tends to be less hateful"""
     return NEGATIVE if len(doc) < 5 else ABSTAIN
 
 # Keywords matching
 @labeling_function()
-def lf_keyword_strong_swearing(df):
-    doc = df.at[0]
+def lf_keyword_strong_swearing(doc):
     strong_swearing = ["cunt", "fuck", "motherfucker", "bastard", "dickhead", "bellend"]
-    return POSITIVE if any( word in doc.text for word in strong_swearing) else ABSTAIN
+    return POSITIVE if any( word in doc for word in strong_swearing) else ABSTAIN
 
 # Keywords matching
 @labeling_function()
-def lf_keyword_violence(df):
-    doc = df.at[0]
+def lf_keyword_violence(doc):
     violence = ["beat", "tear", "shoot", "punch", "rape", "assault"]
-    return POSITIVE if any( word in doc.text for word in violence) else ABSTAIN
+    return POSITIVE if any( word in doc for word in violence) else ABSTAIN
 
 # # More complicated methods
 # @labeling_function()

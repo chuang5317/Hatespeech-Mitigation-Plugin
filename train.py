@@ -16,7 +16,7 @@ NEGATIVE = 2
 df_train = ds.get_E6oV3lV()
 
 # Define the set of labeling functions (LFs)
-lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing] # and one more in order to run ...
+lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence] # and one more in order to run ...
 
 # Apply the LFs to the unlabeled training data
 applier = PandasLFApplier(lfs)

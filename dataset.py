@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import preprocessing as pre
+import spacy
 # import tweepy
 
 # All functions should return a Pandas DataFrame of spacy documents
@@ -11,43 +12,32 @@ import preprocessing as pre
 
 # For plain text.
 def get_sample_dataset_from_paintext(folder):
-    ret = []
+    texts = []
     for file in os.listdir(folder):
         filepath = os.path.join(folder, file)
         f = open(filepath, 'r')
-        ret.append(pre.preprocess(f.read()))
+        texts.append(f.read())
         f.close()
-    return pd.DataFrame([ret])
+    return pre.preprocess(texts)
 
 # different csv have different structure... need individual functions
 def get_E6oV3lV():
-    ret = []
     addr = "./dataset/train_E6oV3lV.csv"
     original = pd.read_csv(addr)
     texts = original.iloc[:,2].tolist()
-    for text in texts:
-        ret.append([pre.preprocess(text)])
-    return pd.DataFrame([ret])
+    return pre.preprocess(texts)
 
 def get_debug():
-    ret = []
     addr = "./dataset/for_debug.csv"
     original = pd.read_csv(addr)
     texts = original.iloc[:,6].tolist()
-    for text in texts:
-        spacy = pre.preprocess(text)
-        ret.append([spacy])
-    return pd.DataFrame(ret)
+    return pre.preprocess(texts)
 
 def get_davison():
-    ret = []
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
     texts = original.iloc[:,6].tolist()
-    for text in texts:
-        spacy = pre.preprocess(text)
-        ret.append([spacy])
-    return pd.DataFrame(ret)
+    return pre.preprocess(texts)
 
 # def lookup_tweets(tweet_IDs, api):
 #     full_tweets = []

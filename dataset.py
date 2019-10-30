@@ -1,8 +1,11 @@
 import os
 import pandas as pd
 import preprocessing as pre
-# Need more datasets
 # All functions should return a Pandas DataFrame of spacy documents
+# e.g. 0        "label"
+# 0    doc1     (this colum will be created in train.py)
+# 1    doc2     -
+# ...  ...      ...
 
 # For plain text.
 def get_sample_dataset_from_paintext(folder):
@@ -14,12 +17,14 @@ def get_sample_dataset_from_paintext(folder):
         f.close()
     return pd.DataFrame(ret)
 
-# For CSV. 
-def get_sample_dataset(name):
-    addr = "./dataset/" + name
-    panda = pd.read_csv(addr)
-    #TODO: insert preprocessing
+# different csv have different structure... need individual functions
+def get_E6oV3lV():
+    ret = []
+    addr = "./dataset/train_E6oV3lV.csv"
+    original = pd.read_csv(addr)
+    texts = original.iloc[:,2].tolist()
+    for text in texts:
+        ret.append(pre.preprocess(text))
+    return pd.DataFrame(ret)
 
-
-
-#TODO: get data from tweet id
+#TODO: get data from tweet id -- use tweepy

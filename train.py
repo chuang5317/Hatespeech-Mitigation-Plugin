@@ -13,7 +13,7 @@ ABSTAIN = 0
 POSITIVE = 1
 NEGATIVE = 2
 
-df_train = ds.get_debug()
+df_train = ds.get_davison()
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
@@ -41,12 +41,13 @@ print("Useful data remaining: " + str(df_train.shape[0]))
 # Training a Classifier
 docs = df_train.iloc[:,0].tolist() # first column of data frame (first_name)
 print(df_train)
+df_train.to_csv('labelledDataset.csv', index = None, header = True)
 
 train_text = []
 for doc in docs:
     # print(doc.text)
     train_text.append(doc.text)
-print(train_text)
+# print(train_text)
 
 X_train = CountVectorizer(ngram_range=(1, 2)).fit_transform(train_text)
 

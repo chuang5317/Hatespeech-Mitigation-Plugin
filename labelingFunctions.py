@@ -39,8 +39,6 @@ def lf_spacy_adj_sexism(df):
     if(any (word in df.at['tokens'] for word in gender_related_words)):
         adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
         for a in adjs:
-            # print(a.text)
-            # print(a.similarity(pre.negative_word))
             if(a.similarity(pre.negative_word) > 0.25):
                 return POSITIVE
     return ABSTAIN
@@ -52,8 +50,6 @@ def lf_spacy_adj_racism(df):
     if(any (word in df.at['tokens'] for word in gender_related_words)):
         adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
         for a in adjs:
-            # print(a.text)
-            # print(a.similarity(pre.negative_word))
             if(a.similarity(pre.negative_word) > 0.25):
                 return POSITIVE
     return ABSTAIN

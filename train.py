@@ -13,7 +13,7 @@ ABSTAIN = 0
 POSITIVE = 1
 NEGATIVE = 2
 
-df_train = ds.get_davison()
+df_train = ds.get_debug()
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,

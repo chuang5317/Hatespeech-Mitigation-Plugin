@@ -13,7 +13,7 @@ ABSTAIN = 0
 POSITIVE = 1
 NEGATIVE = 2
 
-df_train = ds.get_debug()
+df_train = ds.get_davison()
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
@@ -49,11 +49,12 @@ for doc in docs:
     train_text.append(doc.text)
 # print(train_text)
 
-X_train = CountVectorizer(ngram_range=(1, 2)).fit_transform(train_text)
+count_vec = CountVectorizer(ngram_range=(1, 2))
+X_train = count_vec.fit_transform(train_text)
 
 clf = LogisticRegression(solver="lbfgs")
 clf.fit(X=X_train, y=df_train.label.values)
 
 # TODO: apply this classifier to text & test if the outcome is good
-
-print("Done!")
+x_test = count_vec.transform(["nigger you know we hacky sack hoes."])
+print(clf.predict(x_test))

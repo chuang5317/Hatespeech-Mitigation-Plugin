@@ -1,8 +1,6 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/plugin
-    # The primary container is an instance of the first image listed. The job's commands run in this container.
     docker:
       - image: circleci/python:stretch
     steps:
@@ -12,6 +10,16 @@ jobs:
       - image: circleci/python:stretch
     steps:
       - checkout
+      - run:
+          command: |
+            cd hatespeech_backend/
+            sudo pip install -r requirements.txt
+            pytest
+            coverage run -m pytest
+            coverage report
+            coverage html
+      - store_artifacts:
+          path: ~/project/hatespeech_backend/htmlcov
 workflows:
   version: 2
   build_and_test:

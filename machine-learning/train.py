@@ -17,7 +17,7 @@ df_train = ds.get_davison()
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
-        lf.lf_spacy_adj_sexism, lf.lf_spacy_adj_racism] # and one more in order to run ...
+        lf.lf_spacy_words_sexism, lf.lf_spacy_words_racism, lf.lf_spacy_words_gpe] # and one more in order to run ...
 
 # Apply the LFs to the unlabeled training data
 applier = PandasLFApplier(lfs)
@@ -56,5 +56,5 @@ clf = LogisticRegression(solver="lbfgs")
 clf.fit(X=X_train, y=df_train.label.values)
 
 # TODO: apply this classifier to text & test if the outcome is good
-x_test = count_vec.transform(["nigger you know we hacky sack hoes."])
+x_test = count_vec.transform(["fuck you bitch lmao go back to your country !!"])
 print(clf.predict(x_test))

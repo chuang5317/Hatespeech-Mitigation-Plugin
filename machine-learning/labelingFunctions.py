@@ -20,49 +20,42 @@ def lf_neg_short(df):
 # Keywords matching
 @labeling_function()
 def lf_keyword_strong_swearing(df):
-    doc = df.at['tokens']
     strong_swearing = ["cunt", "fuck", "motherfucker", "bastard", "dickhead", "bellend"]
-    return POSITIVE if any( word in doc for word in strong_swearing) else ABSTAIN
+    return POSITIVE if any( word in df.at['nouns'] for word in strong_swearing) else ABSTAIN
 
 # Keywords matching
 @labeling_function()
 def lf_keyword_violence(df):
-    doc = df.at['tokens']
-    violence = ["beat", "tear", "shoot", "punch", "rape", "assault"]
-    return POSITIVE if any( word in doc for word in violence) else ABSTAIN
+    # violence = ["beat", "tear", "shoot", "punch", "rape", "assault"]
+    if(df.at['violence_verb']):
+        return POSITIVE
+    return ABSTAIN
 
 # More complicated methods
 @labeling_function()
-def lf_spacy_adj_sexism(df):
+def lf_spacy_words_sexism(df):
     ''' Detects if negative adjectives are apeearing in the same doc with gender nouns'''
-    gender_related_words = ["female", "male", "MtF", "FtM", "slut", "bitch", "hoe", "boy", "girl"] # Add more ...
-    if(any (word in df.at['tokens'] for word in gender_related_words)):
-        adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
-        for a in adjs:
-            if(a.similarity(pre.negative_word) > 0.25):
-                return POSITIVE
+    gender_related_words = ["female", "male", "MtF", "FtM", "slut", "bitch", "hoe", "boy", "girl", "man", "woman"] # Add more ...
+    if(any (word in df.at['nouns'] for word in gender_related_words)):
+        if(df.at['negative_adj'] or df.at['violence_verb']):
+            return POSITIVE
     return ABSTAIN
 
 @labeling_function()
-def lf_spacy_adj_racism(df):
-    ''' Detects if negative adjectives are apeearing in the same doc with race nouns'''
-    race_related_words = ["nigger", "chink"] # Add more ...
-    if(any (word in df.at['tokens'] for word in race_related_words)):
-        adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
-        for a in adjs:
-            if(a.similarity(pre.negative_word) > 0.25):
-                return POSITIVE
+def lf_spacy_words_racism(df):
+    ''' Detects if negative adjectives are appearing in the same doc with race nouns'''
+    race_related_words = ["nigger", "chink", "asian", "white", "jew"] # Add more ...
+    if(any (word in df.at['nouns'] for word in race_related_words)):
+        if(df.at['negative_adj'] or df.at['violence_verb']):
+            return POSITIVE
     return ABSTAIN
 
 @labeling_function()
-def lf_spacy_adj_gpe(df):
-    ''' Detects if negative adjectives are apeearing in the same doc with race nouns'''
-    race_related_words = ["nigger", "chink"] # Add more ...
-    if(df.at['countries'].length > 0):
-        adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
-        for a in adjs:
-            if(a.similarity(pre.negative_word) > 0.25):
-                return POSITIVE
+def lf_spacy_words_gpe(df):
+    ''' Detects if negative adjectives are appearing in the same doc with geographical locations '''
+    if(df.at['countries']):
+        if(df.at['negative_adj'] or df.at['violence_verb']):
+            return POSITIVE
     return ABSTAIN
 
 

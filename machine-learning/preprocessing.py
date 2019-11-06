@@ -6,7 +6,7 @@ spacy_nlp = spacy.load("en_core_web_md") # sm, md, lg
 #Trade off : md, lg give more accurate result but sm is significantly faster
 
 # Constants for word similarity comparison
-negative_word = spacy_nlp("bad")
+negative_word = spacy_nlp("disgusting")
 violence_word = spacy_nlp("beat")
 swear_word = spacy_nlp("bellend")
 gender_word = spacy_nlp("girl")
@@ -64,7 +64,7 @@ def preprocess(texts):
                 break
         adjs_ = filter((lambda token: token.pos_ == "ADJ"), nlp)
         for a in adjs_:
-            if(a.similarity(negative_word) > 0.24):
+            if(a.similarity(negative_word) > 0.35):
                 thisNegativeAdj = True
                 break
         verbs_ = filter((lambda token: token.pos_ == "VERB"), nlp)

@@ -17,7 +17,7 @@ df_train = ds.get_davison()
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
-        lf.lf_spacy_words_sexism, lf.lf_spacy_words_racism, lf.lf_spacy_words_gpe] # and one more in order to run ...
+        lf.lf_spacy_words_sexism, lf.lf_keyword_raicism, lf.lf_spacy_words_gpe] #add more later
 
 # Apply the LFs to the unlabeled training data
 applier = PandasLFApplier(lfs)
@@ -28,8 +28,12 @@ L_train = applier.apply(df_train)
 label_model = LabelModel(cardinality=3, verbose=True)
 label_model.fit(L_train, n_epochs=500, log_freq=50, seed=123)
 df_train["label"] = label_model.predict(L=L_train, tie_break_policy="abstain")
+
+#output
+df_train.to_csv('labelledDataset.csv', index = None, header = True)
+
 # Filter out useless data
-# df_train = df_train[df_train.label != ABSTAIN]
+df_train = df_train[df_train.label != ABSTAIN]
 print("Useful data remaining: " + str(df_train.shape[0]))
 
 # Ignoring Transformation Functions for Data Augmentation for now...
@@ -41,7 +45,6 @@ print("Useful data remaining: " + str(df_train.shape[0]))
 # Training a Classifier
 docs = df_train.iloc[:,0].tolist() # first column of data frame (first_name)
 print(df_train)
-df_train.to_csv('labelledDataset.csv', index = None, header = True)
 
 train_text = []
 for doc in docs:
@@ -56,5 +59,17 @@ clf = LogisticRegression(solver="lbfgs")
 clf.fit(X=X_train, y=df_train.label.values)
 
 # TODO: apply this classifier to text & test if the outcome is good
-x_test = count_vec.transform(["fuck you bitch lmao go back to your country !!"])
+x_test = count_vec.transform(["apply this classifier to text & test if the outcome is good"]) # I don't mean it
+x_test1 = count_vec.transform(["imperial is such a great university!"])
+x_test2 = count_vec.transform(["all other universities are not as good as imperial"])
+x_test3 = count_vec.transform(["african universities are very bad because they are full of african people"])
+x_test4 = count_vec.transform(["black people are all very bad and should not be allowed in university"])
+x_test5 = count_vec.transform(["fuck niggers and fuck their african countries"])
+
 print(clf.predict(x_test))
+print(clf.predict(x_test1))
+print(clf.predict(x_test2))
+print(clf.predict(x_test3))
+print(clf.predict(x_test4))
+print(clf.predict(x_test5))
+

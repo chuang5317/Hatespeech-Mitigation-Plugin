@@ -20,8 +20,15 @@ def lf_neg_short(df):
 # Keywords matching
 @labeling_function()
 def lf_keyword_strong_swearing(df):
-    strong_swearing = ["cunt", "fuck", "motherfucker", "bastard", "dickhead", "bellend"]
-    return POSITIVE if any( word in df.at['nouns'] for word in strong_swearing) else ABSTAIN
+    if (df.at['swear_noun']):
+        return POSITIVE
+    return ABSTAIN
+
+@labeling_function()
+def lf_keyword_raicism(df):
+    if (df.at['racist_noun']):
+        return POSITIVE
+    return ABSTAIN
 
 # Keywords matching
 @labeling_function()
@@ -35,19 +42,15 @@ def lf_keyword_violence(df):
 @labeling_function()
 def lf_spacy_words_sexism(df):
     ''' Detects if negative adjectives are apeearing in the same doc with gender nouns'''
-    gender_related_words = ["female", "male", "MtF", "FtM", "slut", "bitch", "hoe", "boy", "girl", "man", "woman"] # Add more ...
-    if(any (word in df.at['nouns'] for word in gender_related_words)):
-        if(df.at['negative_adj'] or df.at['violence_verb']):
-            return POSITIVE
+    if(df.at['gender_noun'] and (df.at['negative_adj'] or df.at['violence_verb'])):
+        return POSITIVE
     return ABSTAIN
 
 @labeling_function()
-def lf_spacy_words_racism(df):
-    ''' Detects if negative adjectives are appearing in the same doc with race nouns'''
-    race_related_words = ["nigger", "chink", "asian", "white", "jew"] # Add more ...
-    if(any (word in df.at['nouns'] for word in race_related_words)):
-        if(df.at['negative_adj'] or df.at['violence_verb']):
-            return POSITIVE
+def lf_spacy_words_lgbt(df):
+    ''' Detects if negative adjectives are appearing in the same doc with lgbt nouns '''
+    if(df.at['lgbt_noun'] and (df.at['negative_adj'] or df.at['violence_verb'])):
+        return POSITIVE
     return ABSTAIN
 
 @labeling_function()

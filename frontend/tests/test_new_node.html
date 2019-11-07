@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hatespeech Plugin Tests - New Node</title>
+</head>
+<body>
+
+<h1>Hatespeech Plugin Tests - New Node</h1>
+
+<p>This is a page that loads a new node into the DOM tree dynamically.</p>
+
+<p>Below is an empty list. 3 new nodes will be inserted below, one after the other, with delays in between.</p>
+<ol id="dummy-ol"></ol>
+
+<script type="application/javascript">
+    function insertNode() {
+        const node = document.createElement("li");
+        const textNode = document.createTextNode("A new item has appeared.");
+        node.appendChild(textNode);
+        document.getElementById("dummy-ol").appendChild(node);
+    }
+    setTimeout(insertNode, 1000);
+    setTimeout(insertNode, 2000);
+    setTimeout(insertNode, 3000);
+</script>
+
+</body>
+</html> 

@@ -1,6 +1,6 @@
 function restoreOptions() {
   function setCurrentChoice(item) {
-    checkbox = document.querySelector('input[type="checkbox"]');
+    checkbox = document.getElementById("toggle-slider-input");
     checkbox.checked = item.HateSpeechOn;
   }
   function onError(error) {
@@ -10,10 +10,17 @@ function restoreOptions() {
   getting.then(setCurrentChoice, onError);
 }
 
-var checkbox = document.querySelector('input[type="checkbox"]');
-checkbox.addEventListener('change', function () {
+var checkbox = document.getElementById("toggle-slider-input");
+checkbox.addEventListener("change", function() {
+  console.log(`Hatespeech detection set to ${checkbox.checked}.`);
   browser.storage.sync.set({
-    HateSpeechOn : checkbox.checked
+    HateSpeechOn: checkbox.checked
   });
 });
 document.addEventListener("DOMContentLoaded", restoreOptions);
+
+var reloadButton = document.getElementById("reload-page-button");
+reloadButton.addEventListener("click", () => {
+  console.log("Reload button clicked.");
+  browser.tabs.reload();
+});

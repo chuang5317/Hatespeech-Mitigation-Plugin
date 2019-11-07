@@ -20,8 +20,6 @@ class NodeManager {
 
   getID(node) {
     // TODO: not efficient, will experiment
-    const iterator = this.nodeIDMap.keys();
-
     for (const nodeID of this.nodeIDMap.keys()) {
       if (this.nodeIDMap.get(nodeID) === node) {
         return nodeID;
@@ -63,7 +61,7 @@ function onNewContentAdded(mutations) {
     }
 
     for (let node of mutation.addedNodes) {
-      hatespeech_detection(node);
+      detectHatespeech(node);
     }
   });
 }
@@ -86,7 +84,7 @@ function isAllWhiteSpace(nod) {
  */
 function walkNodeTree(root) {
   const nodes = [];
-  node = root;
+  let node = root;
   start: while (node) {
     if (node.nodeType === Node.TEXT_NODE && !isAllWhiteSpace(node)) {
       nodes.push(node);
@@ -149,12 +147,12 @@ function fetchHatespeechInfo(str) {
  */
 function blurHatespeechNodes(textNodes) {
   // Range of hatespeech nodes to flag. Hard-coded, but it should be a real result from the backend
-  blurRange = [234, 435];
-  pos = 0;
-  hateSpeechIndex = 0;
+  let blurRange = [234, 435];
+  let pos = 0;
+  let hateSpeechIndex = 0;
   for (const textNode of textNodes) {
     pos += textNode.length;
-    if (pos >= result[hateSpeechIndex]) {
+    if (pos >= blurRange[hateSpeechIndex]) {
       textNode.parentNode.classList.add("blurry-text");
       hateSpeechIndex++;
     }
@@ -168,7 +166,7 @@ function blurHatespeechNodes(textNodes) {
  * Run hate speech checking over the DOM Tree.
  * @param root - DOM root node
  */
-function hatespeech_detection(root) {
+function detectHatespeech(root) {
   function onError(error) {
     alert(`Error: ${error}`);
   }
@@ -217,5 +215,5 @@ document.addEventListener("DOMContentLoaded", event => {
   document.getElementsByTagName("head")[0].appendChild(style);
 
   initNodeManager();
-  hatespeech_detection(document.body);
+  detectHatespeech(document.body);
 });

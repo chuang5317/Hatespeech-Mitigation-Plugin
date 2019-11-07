@@ -1,4 +1,33 @@
 /**
+ * Determine whether a node's text content is entirely whitespace.
+ * Source: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
+ *
+ * @param node - the node to test
+ * @return - True if all of the text content of `node` is whitespace, otherwise false.
+ */
+function isAllWhiteSpace(node) {
+  // Use ECMA-262 Edition 3 String and RegExp features
+  return !/[^\t\n\r ]/.test(node.textContent);
+}
+
+/**
+ * Determine if a node is a meaningful text node.
+ * @param node - a DOM node
+ * @returns boolean
+ */
+function isUsefulNode(node) {
+  // the text node within a SCRIPT Element node is javascript code
+  // the text node within a STYLE Element node is CSS
+  // We don't want these.
+  let isParentOk =
+    node.parentNode === null ||
+    !["STYLE", "SCRIPT"].includes(node.parentNode.nodeName);
+  return (
+    node.nodeType === Node.TEXT_NODE && !isAllWhiteSpace(node) && isParentOk
+  );
+}
+
+/**
  * Keeps track of DOM nodes and node ids.
  *
  * NOTE: this is ES6 syntax.
@@ -70,18 +99,6 @@ function onNewContentAdded(mutations) {
 }
 
 /**
- * Determine whether a node's text content is entirely whitespace.
- * Source: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace_in_the_DOM
- *
- * @param node - the node to test
- * @return - True if all of the text content of `node` is whitespace, otherwise false.
- */
-function isAllWhiteSpace(nod) {
-  // Use ECMA-262 Edition 3 String and RegExp features
-  return !/[^\t\n\r ]/.test(nod.textContent);
-}
-
-/**
  * Traverse the DOM tree and collect text nodes.
  * @param root - DOM root node.
  */
@@ -89,7 +106,7 @@ function walkNodeTree(root) {
   const nodes = [];
   let node = root;
   start: while (node) {
-    if (node.nodeType === Node.TEXT_NODE && !isAllWhiteSpace(node)) {
+    if (isUsefulNode(node)) {
       nodes.push(node);
     } else {
       const observer = new MutationObserver(onNewContentAdded);

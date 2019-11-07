@@ -33,6 +33,15 @@ def get_debug():
     texts = original.iloc[:,6].tolist()
     return pre.preprocess(texts)
 
+def get_combined():
+    addr1 = "./dataset/davison.csv"
+    original1 = pd.read_csv(addr1)
+    texts = original1.iloc[:,6].tolist()
+    addr2 = "./dataset/train_E6oV3lV.csv"
+    original2 = pd.read_csv(addr2)
+    texts += original2.iloc[:,2].tolist()
+    return pre.preprocess(texts)
+
 def get_davison():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)

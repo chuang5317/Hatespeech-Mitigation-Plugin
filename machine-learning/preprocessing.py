@@ -12,85 +12,112 @@ swear_word = spacy_nlp("bellend")
 gender_word = spacy_nlp("girl")
 racist_word = spacy_nlp("nigger")
 lgbt_word = spacy_nlp("homosexual")
+shaming_word = spacy_nlp("autistic")
+threat_word = spacy_nlp("killer")
+terrorism_word = spacy_nlp("terrorist")
 
 def preprocess(texts):
     spacy = []
     tokens = []
     countries = []
-    names = []
-    violence_verb = []
-    swear_noun = []
-    negative_adj = []
+    # names = []
+    violence = []
+    swear = []
+    negative = []
     nouns = []
-    gender_noun = []
-    racist_noun = []
-    lgbt_noun = []
+    gender = []
+    racist = []
+    lgbt = []
+    shame = []
+    threat = []
+    terrorism = []
     # add more series here later to accelerate the running speed
     for text in texts:
         nlp = spacy_nlp(text)
         spacy.append(nlp)
         thisTokenList = []
         thisCountries = []
-        thisNames = []
+        # thisNames = []
         thisNouns = []
-        thisViolenceVerb = False
-        thisNegativeAdj = False
-        thisSwearNoun = False
-        thisGenderNoun = False
-        thisRacistNoun = False
-        thisLGBTNoun = False
+        thisViolence = False
+        thisNegative = False
+        thisSwear = False
+        thisGender = False
+        thisRacist = False
+        thisLGBT = False
+        thisShame = False
+        thisThreat = False
+        thisTerrorism = False
         for token in nlp:
             thisTokenList.append(token.text)
         for ent in nlp.ents:
             if(ent.label_ == "GPE"):
                 thisCountries.append(ent)
-            if(ent.label_ == "PERSON"):
-                thisNames.append(ent)
+            # if(ent.label_ == "PERSON"):
+            #     thisNames.append(ent)
         for n in nlp: 
-            if(n.similarity(swear_word) > 0.35):
-                thisSwearNoun = True
+            if(n.similarity(swear_word) > 0.33):
+                thisSwear = True
                 break
         for n in nlp: 
-            if(n.similarity(gender_word) > 0.35):
-                thisGenderNoun = True
+            if(n.similarity(gender_word) > 0.33):
+                thisGender = True
                 break
         for n in nlp: 
-            if(n.similarity(racist_word) > 0.35):
-                thisRacistNoun = True
+            if(n.similarity(racist_word) > 0.33):
+                thisRacist = True
                 break
         for n in nlp: 
-            if(n.similarity(lgbt_word) > 0.35):
-                thisLGBTNoun = True
+            if(n.similarity(lgbt_word) > 0.33):
+                thisLGBT = True
+                break
+        for n in nlp: 
+            if(n.similarity(shaming_word) > 0.33):
+                thisShame = True
+                break
+        for n in nlp: 
+            if(n.similarity(threat_word) > 0.33):
+                thisThreat = True
+                break
+        for n in nlp:
+            if(n.similarity(terrorism_word) > 0.33):
+                thisTerrorism = True
                 break
         adjs_ = filter((lambda token: token.pos_ == "ADJ"), nlp)
         for a in adjs_:
-            if(a.similarity(negative_word) > 0.35):
-                thisNegativeAdj = True
+            if(a.similarity(negative_word) > 0.33):
+                thisNegative = True
                 break
         verbs_ = filter((lambda token: token.pos_ == "VERB"), nlp)
         for v in verbs_:
             if(v.similarity(violence_word) > 0.24):
-                thisViolenceVerb = True
+                thisViolence = True
                 break
         countries.append(thisCountries)
         tokens.append(thisTokenList)
-        names.append(thisNames)
-        violence_verb.append(thisViolenceVerb)
-        negative_adj.append(thisNegativeAdj)
-        swear_noun.append(thisSwearNoun)
-        gender_noun.append(thisGenderNoun)
-        racist_noun.append(thisRacistNoun)
-        lgbt_noun.append(thisLGBTNoun)
+        # names.append(thisNames)
+        violence.append(thisViolence)
+        negative.append(thisNegative)
+        swear.append(thisSwear)
+        gender.append(thisGender)
+        racist.append(thisRacist)
+        lgbt.append(thisLGBT)
+        shame.append(thisShame)
+        threat.append(thisThreat)
+        terrorism.append(thisTerrorism)
 
     df = pd.DataFrame()
     df['spacy'] = spacy
     df['tokens'] = tokens
-    df['names'] = names
+    # df['names'] = names
     df['countries'] = countries
-    df['violence_verb'] = violence_verb
-    df['negative_adj'] = negative_adj
-    df['swear_noun'] = swear_noun
-    df['gender_noun'] = gender_noun
-    df['racist_noun'] = racist_noun
-    df['lgbt_noun'] = lgbt_noun
+    df['violence'] = violence
+    df['negative'] = negative
+    df['swear'] = swear
+    df['gender'] = gender
+    df['racist'] = racist
+    df['lgbt'] = lgbt
+    df['shame'] = shame
+    df['threat'] = threat
+    df['terrorism'] = terrorism
     return df

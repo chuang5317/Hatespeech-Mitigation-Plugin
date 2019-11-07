@@ -31,12 +31,13 @@ class NodeManager {
 
 /**
  * Initialise the node ID manager. To be called in a DOMContentLoaded listener.
+ * @param root - root node to start recursively adding from
  */
-function initNodeManager() {
+function populateNodeManager(root) {
   // Apparently tree walker is the fastest way to get text nodes
   // https://stackoverflow.com/questions/2579666
   const walker = document.createTreeWalker(
-    document.body,
+    root,
     NodeFilter.SHOW_TEXT,
     // NodeFilter.SHOW_ALL,
     null,
@@ -56,10 +57,12 @@ const nodeManager = new NodeManager();
  */
 function onNewContentAdded(mutations) {
   mutations.forEach(mutation => {
+    // Need to recursively assign new text node IDs.
     for (let node of mutation.addedNodes) {
-      nodeManager.addNode(node);
+      populateNodeManager(node);
     }
 
+    // Then run hate speech detection.
     for (let node of mutation.addedNodes) {
       detectHatespeech(node);
     }
@@ -119,47 +122,44 @@ function walkNodeTree(root) {
  * Retrieve results from the hate speech NLP service.
  *
  * @param str - string of text to send to service.
+ *
+ * @returns - a Promise object that will contain a response object if successfull.
  */
-function fetchHatespeechInfo(str) {
-  const apiUrl = "http://127.0.0.1:5000/getmethod";
-  // const apiUrl = "http://127.0.0.1:5000/frontend-expt";
-  let xhr = new XMLHttpRequest();
+function fetchHatespeechInfo(data) {
+  const apiUrl = "http://127.0.0.1:5000/hatespeech";
 
-  xhr.open("GET", apiUrl, true);
-  xhr.send(JSON.stringify({ htmltext: str }));
-  xhr.onprogress = () => {};
-  xhr.onload = () => {
-    if (xhr.status !== 200) {
-      console.log(`Error ${xhr.status}: ${xhr.statusText}`);
-    } else {
-      console.log(`Done, got ${xhr.response.length} bytes ${xhr.responseText}`);
+  let fetchData = {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
     }
   };
-  xhr.onerror = () => {
-    console.log("Request failed");
-  };
+
+  return fetch(apiUrl, fetchData);
 }
 
 /**
- * Blur hatespeech.
- * @param textNodes - array of text nodes *
- * Should have a range parameter in the future, indicating which nodes to blur.
+ * Blur the entirety of one text node.
+ * @param textNode - a Text Node
  */
-function blurHatespeechNodes(textNodes) {
-  // Range of hatespeech nodes to flag. Hard-coded, but it should be a real result from the backend
-  let blurRange = [234, 435];
-  let pos = 0;
-  let hateSpeechIndex = 0;
-  for (const textNode of textNodes) {
-    pos += textNode.length;
-    if (pos >= blurRange[hateSpeechIndex]) {
-      textNode.parentNode.classList.add("blurry-text");
-      hateSpeechIndex++;
+function blurNode(textNode) {
+  textNode.parentNode.classList.add("blurry-text");
+}
+
+/**
+ * Blur text nodes.
+ * @param textNodes - array of text nodes
+ * @param hatespeechInfo - array returned by service
+ */
+function blurHatespeechNodes(hatespeechInfo) {
+  hatespeechInfo.forEach(info => {
+    // for now, expect info = {id: <node id>, hatespeech: <boolean>}
+    const node = nodeManager.getNode(info.id);
+    if (info.hatespeech) {
+      blurNode(node);
     }
-    if (hateSpeechIndex >= blurRange.length) {
-      break;
-    }
-  }
+  });
 }
 
 /**
@@ -173,19 +173,29 @@ function detectHatespeech(root) {
   function onGot(item) {
     if (item.HateSpeechOn) {
       const allText = walkNodeTree(root); //visit the dom
-      console.log(allText);
-      let str = "";
-
-      for (const textNode of allText) {
-        textNode.parentNode.style.color = getRandomColor();
-        str = str + textNode.nodeValue;
-      }
+      const nodesToJson = allText.map(node => {
+        const id = nodeManager.getID(node);
+        return { id: id, text: node.textContent };
+      });
 
       // Fetch the ranges to blur from the locally running service
-      fetchHatespeechInfo(str);
-
-      // May have to put this in the XMLHttpRequest callback: only blur onProgress.
-      blurHatespeechNodes(allText);
+      const response = fetchHatespeechInfo({ nodes: nodesToJson });
+      response
+        .then(response => {
+          if (!response.ok) {
+            throw Error(response.statusText);
+          }
+          return response;
+        })
+        .then(response => {
+          response.json().then(hatespeechInfo => {
+            console.log(hatespeechInfo);
+            blurHatespeechNodes(hatespeechInfo.result);
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
   var getting = browser.storage.sync.get("HateSpeechOn");
@@ -214,6 +224,6 @@ document.addEventListener("DOMContentLoaded", event => {
     ".blurry-text:hover {\nfilter:none;\n}";
   document.getElementsByTagName("head")[0].appendChild(style);
 
-  initNodeManager();
+  populateNodeManager(document.body);
   detectHatespeech(document.body);
 });

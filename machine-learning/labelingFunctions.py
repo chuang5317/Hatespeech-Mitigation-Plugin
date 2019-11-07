@@ -22,16 +22,75 @@ def lf_neg_short(df):
 def lf_keyword_strong_swearing(df):
     doc = df.at['tokens']
     strong_swearing = ["cunt", "fuck", "motherfucker", "bastard", "dickhead", "bellend"]
-    return POSITIVE if any( word in doc for word in strong_swearing) else ABSTAIN
+    return POSITIVE if any(word in doc for word in strong_swearing) else ABSTAIN
 
 # Keywords matching
 @labeling_function()
 def lf_keyword_violence(df):
     doc = df.at['tokens']
     violence = ["beat", "tear", "shoot", "punch", "rape", "assault"]
-    return POSITIVE if any( word in doc for word in violence) else ABSTAIN
+    return POSITIVE if any(word in doc for word in violence) else ABSTAIN
+
+# Keywords matching
+@labeling_function()
+def lf_keyword_suicide(df):
+    doc = df.at['tokens']
+    suicidal = ["suicide", "kill", "dead", "depressed", "depression", "death"]
+    return POSITIVE if any(word in doc for word in suicidal) else ABSTAIN
+
+# Keywords matching
+@labeling_function()
+def lf_keyword_shaming(df):
+    doc = df.at['tokens']
+    shaming = ["slut", "whore", "pathetic", "stupid", "retarded", "autistic"]
+    return POSITIVE if any(word in doc for word in shaming) else ABSTAIN
 
 # More complicated methods
+
+@labeling_function()
+def lf_spacy_adj_threat(df):
+    ''' Detects if negative adjectives are apeearing in the same doc with threatening words'''
+    threats = ["killer", "murderer", "shooter", "stabber", "victim", "gunman"] # Add more ...
+    if(any (word in df.at['tokens'] for word in threats)):
+        adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
+        for a in adjs:
+            if(a.similarity(pre.negative_word) > 0.25):
+                return POSITIVE
+    return ABSTAIN
+
+@labeling_function()
+def lf_spacy_adj_terrorism(df):
+    ''' Detects if negative adjectives are apeearing in the same doc with terrorism/war'''
+    terror = ["terrorism", "terrorist", "bomber", "war", "taliban", "bombs", "guns"] # Add more ...
+    if(any (word in df.at['tokens'] for word in terror)):
+        adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
+        for a in adjs:
+            if(a.similarity(pre.negative_word) > 0.25):
+                return POSITIVE
+    return ABSTAIN
+
+@labeling_function()
+def lf_spacy_adj_terrorism(df):
+    ''' Detects if negative adjectives are apeearing in the same doc with insects/unpleasant animals'''
+    animals = ["cow", "insect", "vermin", "monkey", "potato", "goldfish"] # Add more ...
+    if(any (word in df.at['tokens'] for word in animals)):
+        adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
+        for a in adjs:
+            if(a.similarity(pre.negative_word) > 0.25):
+                return POSITIVE
+    return ABSTAIN
+
+@labeling_function()
+def lf_spacy_adj_politics(df):
+    ''' Detects if negative adjectives are apeearing in the same doc with politics'''
+    politics = ["party", "conservative", "labour", "right wing", "left wing", "communist", "capitalist"] # Add more ...
+    if(any (word in df.at['tokens'] for word in politics)):
+        adjs = filter((lambda token: token.pos_ == "ADJ"), df.at['spacy'])
+        for a in adjs:
+            if(a.similarity(pre.negative_word) > 0.25):
+                return POSITIVE
+    return ABSTAIN
+
 @labeling_function()
 def lf_spacy_adj_sexism(df):
     ''' Detects if negative adjectives are apeearing in the same doc with gender nouns'''
@@ -42,6 +101,8 @@ def lf_spacy_adj_sexism(df):
             if(a.similarity(pre.negative_word) > 0.25):
                 return POSITIVE
     return ABSTAIN
+
+
 
 @labeling_function()
 def lf_spacy_adj_racism(df):

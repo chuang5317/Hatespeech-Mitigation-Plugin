@@ -19,7 +19,7 @@ x_test7 = count_vec.transform(["We have to kill all the Palestinians unless they
 x_test8 = count_vec.transform(["\"The true Negro does not want integration. ... He realizes his potential is far better among his own race.\" -- Rev. Jerry Falwell"])#
 x_test9 = count_vec.transform(["The National Organization of Women is actually the “National Organization of Witches.” Rev. Jerry Falwell"]) ###
 x_test10 = count_vec.transform(["Check your white privileges you cis white male!"]) ###
-x_test11 = count_vec.transform(["I hate eating apple pie they are nasty"]) 
+x_test11 = count_vec.transform(["I hate eating apple pie, they are nasty as hell"]) 
 
 print(clf.predict(x_test))
 print(clf.predict(x_test1))

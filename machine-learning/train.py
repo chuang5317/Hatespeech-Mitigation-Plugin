@@ -18,7 +18,9 @@ df_train = ds.get_davison()
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
-        lf.lf_spacy_words_sexism, lf.lf_keyword_raicism, lf.lf_spacy_words_gpe] #add more later
+        lf.lf_spacy_words_sexism, lf.lf_keyword_raicism, lf.lf_spacy_words_gpe, 
+        lf.lf_keyword_shaming,  lf.lf_spacy_threat, lf.lf_spacy_terrorism, 
+        lf.lf_spacy_animals, lf.lf_spacy_politics]
 
 # Apply the LFs to the unlabeled training data
 applier = PandasLFApplier(lfs)

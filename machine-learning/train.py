@@ -42,8 +42,7 @@ print("Useful data remaining: " + str(df_train.shape[0]))
 # Ignoring Transformation Functions for Data Augmentation for now...
 # TODO: create transformation functions for different categories of hatespeech
 
-# Ignoring slicing for now...
-# TODO: figure out if we need slicing
+# Ignoring slicing, don't think we need it
 
 # Training a Classifier
 docs = df_train.iloc[:,0].tolist() # first column of data frame (first_name)

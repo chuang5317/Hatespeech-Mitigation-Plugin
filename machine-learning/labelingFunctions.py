@@ -30,15 +30,12 @@ def lf_keyword_raicism(df):
         return POSITIVE
     return ABSTAIN
 
-# Keywords matching
 @labeling_function()
 def lf_keyword_violence(df):
-    # violence = ["beat", "tear", "shoot", "punch", "rape", "assault"]
     if(df.at['violence']):
         return POSITIVE
     return ABSTAIN
 
-# More complicated methods
 @labeling_function()
 def lf_spacy_words_sexism(df):
     ''' Detects if negative adjectives are apeearing in the same doc with gender nouns'''
@@ -68,7 +65,6 @@ def lf_keyword_shaming(df):
         return POSITIVE
     return ABSTAIN
 
-# More complicated methods
 
 @labeling_function()
 def lf_spacy_threat(df):

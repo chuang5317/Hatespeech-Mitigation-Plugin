@@ -20,7 +20,6 @@ def preprocess(texts):
     spacy = []
     tokens = []
     countries = []
-    # names = []
     violence = []
     swear = []
     negative = []
@@ -37,7 +36,6 @@ def preprocess(texts):
         spacy.append(nlp)
         thisTokenList = []
         thisCountries = []
-        # thisNames = []
         thisNouns = []
         thisViolence = False
         thisNegative = False
@@ -53,8 +51,6 @@ def preprocess(texts):
         for ent in nlp.ents:
             if(ent.label_ == "GPE"):
                 thisCountries.append(ent)
-            # if(ent.label_ == "PERSON"):
-            #     thisNames.append(ent)
         for n in nlp: 
             if(n.similarity(swear_word) > 0.33):
                 thisSwear = True
@@ -95,7 +91,6 @@ def preprocess(texts):
                 break
         countries.append(thisCountries)
         tokens.append(thisTokenList)
-        # names.append(thisNames)
         violence.append(thisViolence)
         negative.append(thisNegative)
         swear.append(thisSwear)
@@ -109,7 +104,6 @@ def preprocess(texts):
     df = pd.DataFrame()
     df['spacy'] = spacy
     df['tokens'] = tokens
-    # df['names'] = names
     df['countries'] = countries
     df['violence'] = violence
     df['negative'] = negative

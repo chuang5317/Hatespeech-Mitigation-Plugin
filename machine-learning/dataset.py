@@ -5,7 +5,7 @@ import spacy
 # import tweepy
 
 # All functions should return a Pandas DataFrame of spacy documents
-# e.g. "spacy" "tokens"        "label"
+# e.g. "spacy" "tokens"        "label"              .....more
 # 0    doc1    (list of words) (this colum will be created in train.py)
 # 1    doc2                     -
 # ...  ...      ...

@@ -17,10 +17,11 @@ checkbox.addEventListener('change', function () {
   });
 });
 
-document.getElementById("switch").onclick = function() {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.update(tabs[0].id, {url: tabs[0].url});
-    });
-};
-
 document.addEventListener("DOMContentLoaded", restoreOptions);
+
+
+var reloadButton = document.getElementById("switch");
+reloadButton.addEventListener("click", () => {
+  console.log("Reload button clicked.");
+  browser.tabs.reload();
+});

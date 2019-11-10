@@ -1,5 +1,6 @@
 html, body {
     width: 100px;
+    background-color: #000;
   }
 
 .container {
@@ -21,7 +22,7 @@ html, body {
 
 .checkbox-container label {
 	background-color: #aaa;
-	border: 1px solid #fff;
+	border: 2px solid #fff;
 	border-radius: 20px;
 	display: inline-block;
 	position: relative;

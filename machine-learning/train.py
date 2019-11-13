@@ -14,13 +14,16 @@ ABSTAIN = 0
 POSITIVE = 1
 NEGATIVE = 2
 
-df_train = ds.get_davison() 
+
+df_train = ds.get_davison() #out performed combined dataset
 
 # Define the set of labeling functions (LFs)
 lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
         lf.lf_spacy_words_sexism, lf.lf_keyword_raicism, lf.lf_spacy_words_gpe, 
         lf.lf_keyword_shaming,  lf.lf_spacy_threat, lf.lf_spacy_terrorism, 
-        lf.lf_spacy_animals, lf.lf_spacy_politics]
+        lf.lf_neg_nonehumansubject]
+# Unused ones : 
+# lf.lf_spacy_animals, lf.lf_spacy_politics,  # giving false positives
 
 # Apply the LFs to the unlabeled training data
 applier = PandasLFApplier(lfs)
@@ -57,7 +60,7 @@ for doc in docs:
 count_vec = CountVectorizer(ngram_range=(1, 2))
 X_train = count_vec.fit_transform(train_text)
 
-clf = LogisticRegression(solver="lbfgs")
+clf = LogisticRegression(solver="lbfgs", max_iter=1000)
 clf.fit(X=X_train, y=df_train.label.values)
 
 # save the model to disk

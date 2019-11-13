@@ -17,6 +17,11 @@ def lf_neg_short(df):
     """Short text tends to be less hateful"""
     return NEGATIVE if len(doc) < 5 else ABSTAIN
 
+@labeling_function()
+def lf_neg_nonehumansubject(df):
+    """If the sentence is describing things rather than human"""
+    return NEGATIVE if not df.at['humansubject'] else ABSTAIN
+
 # Keywords matching
 @labeling_function()
 def lf_keyword_strong_swearing(df):
@@ -53,7 +58,7 @@ def lf_spacy_words_lgbt(df):
 @labeling_function()
 def lf_spacy_words_gpe(df):
     ''' Detects if negative adjectives are appearing in the same doc with geographical locations '''
-    if(df.at['countries']):
+    if(df.at['humansubject']):
         if(df.at['negative'] or df.at['violence']):
             return POSITIVE
     return ABSTAIN

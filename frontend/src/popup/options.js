@@ -16,11 +16,7 @@ checkbox.addEventListener("change", function() {
   browser.storage.sync.set({
     HateSpeechOn: checkbox.checked
   });
-});
-document.addEventListener("DOMContentLoaded", restoreOptions);
-
-var reloadButton = document.getElementById("reload-page-button");
-reloadButton.addEventListener("click", () => {
-  console.log("Reload button clicked.");
   browser.tabs.reload();
 });
+
+document.addEventListener("DOMContentLoaded", restoreOptions);

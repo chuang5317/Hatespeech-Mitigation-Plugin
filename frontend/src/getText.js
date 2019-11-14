@@ -143,7 +143,9 @@ function walkNodeTree(root) {
  * @returns - a Promise object that will contain a response object if successfull.
  */
 function fetchHatespeechInfo(data) {
-  const apiUrl = "http://127.0.0.1:5000/hatespeech";
+  // const apiUrl = "http://127.0.0.1:5000/hatespeech";
+  const apiUrl =
+    "https://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/sentiment";
 
   let fetchData = {
     method: "POST",
@@ -173,7 +175,10 @@ function blurHatespeechNodes(hatespeechInfo) {
   hatespeechInfo.forEach(info => {
     // for now, expect info = {id: <node id>, hatespeech: <boolean>}
     const node = nodeManager.getNode(info.id);
-    if (info.hatespeech) {
+    // const isHatespeech = info.hatespeech;
+    const isHatespeech = info.result;
+    console.log(isHatespeech);
+    if (isHatespeech) {
       blurNode(node);
     }
   });
@@ -206,8 +211,7 @@ function detectHatespeech(root) {
         })
         .then(response => {
           response.json().then(hatespeechInfo => {
-            console.log(hatespeechInfo);
-            blurHatespeechNodes(hatespeechInfo.result);
+            blurHatespeechNodes(hatespeechInfo);
           });
         })
         .catch(error => {

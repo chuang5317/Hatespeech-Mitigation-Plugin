@@ -1,10 +1,8 @@
-
 from http import HTTPStatus
 import pytest
 
 from flask import json
-from hatespeech_backend import server
-
+from backend import server
 
 @pytest.fixture
 def client():

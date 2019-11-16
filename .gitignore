@@ -1,3 +1,4 @@
+*.DS_STORE
 labelledDataset.csv
 venv
 __pycache__

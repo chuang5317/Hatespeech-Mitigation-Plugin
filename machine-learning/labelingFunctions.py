@@ -97,7 +97,7 @@ def lf_spacy_animals(df):
 @labeling_function()
 def lf_spacy_politics(df):
     ''' Detects if negative adjectives are apeearing in the same doc with politics'''
-    politics = ["party", "conservative", "labour", "right wing", "left wing", "communist", "capitalist"] # Add more ...
+    politics = ["party", "conservative", "labour", "right-wing", "left-wing", "communist", "capitalist"] # Add more ...
     if(any (word in df.at['tokens'] for word in politics)):
         if(df['negative']):
             return POSITIVE

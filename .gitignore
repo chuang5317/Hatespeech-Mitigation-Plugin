@@ -5,3 +5,9 @@ __pycache__
 .pytest_cache
 machine-learning/hate_speech_classifier
 machine-learning/hate_speech_CountVectorizer
+machine-learning/lr_hate_speech_classifier
+machine-learning/lr_hate_speech_CountVectorizer
+machine-learning/svm_hate_speech_CountVectorizer
+machine-learning/svm_hate_speech_classifier
+machine-learning/similarity.py
+machine-learning/py3env

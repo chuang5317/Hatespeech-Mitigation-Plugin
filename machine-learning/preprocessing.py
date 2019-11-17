@@ -1,11 +1,12 @@
 # Preprocessing of text. Please visit https://spacy.io/api for more information
 import spacy
 import pandas as pd
-from spacy.symbols import nsubj, VERB, ADJ
+from spacy.symbols import nsubj, VERB, ADJ, dobj
 
 # spacy.prefer_gpu() # not very helpful for md size... slower than cpu on GTX1060
 spacy_nlp = spacy.load("en_core_web_md") # sm, md, lg
 #Trade off : md, lg give more accurate result but sm is significantly faster
+#WARNING : lg does not work at all on the davison dataset - cannot detect any negative
 
 # Constants for word similarity comparison
 negative_word = spacy_nlp("disgusting")
@@ -88,10 +89,10 @@ def preprocess(texts):
             if(v.similarity(violence_word) >= 0.25):
                 thisViolence = True
                 break
-        t = list(filter((lambda token: token.dep == nsubj), nlp))
-        if(t):
-            ent = t[0].ent_type
-            thisHumanSubject = (any(ent == e for e in ["PERSON", "NORP", "GPE", "LANGUAGE"]))
+        tlist = list(filter((lambda token: token.dep == nsubj or token.dep == dobj), nlp))
+        for t in tlist:
+            ent = t.ent_type
+            thisHumanSubject = thisHumanSubject or (any(ent == e for e in ["PERSON", "NORP", "GPE", "ORG"]))
         humansubject.append(thisHumanSubject)
         tokens.append(thisTokenList)
         violence.append(thisViolence)

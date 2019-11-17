@@ -3,11 +3,14 @@ import labelingFunctions as lf
 from snorkel.labeling import LabelModel, PandasLFApplier
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn import svm
+from sklearn.naive_bayes import GaussianNB
 import random
 import nltk
 from nltk.corpus import wordnet as wn
 from snorkel.augmentation import transformation_function
 import pickle
+import pandas as pd
 
 # Define the label mappings for convenience
 ABSTAIN = 0
@@ -60,6 +63,11 @@ for doc in docs:
 count_vec = CountVectorizer(ngram_range=(1, 2))
 X_train = count_vec.fit_transform(train_text)
 
+# under
+# clf = svm.SVC(kernel='linear', C = 1.0)
+# clf.fit(X=X_train, y=df_train.label.values)
+
+# over
 clf = LogisticRegression(solver="lbfgs", max_iter=1000)
 clf.fit(X=X_train, y=df_train.label.values)
 

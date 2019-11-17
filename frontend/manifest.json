@@ -1,33 +1,32 @@
 {
+  "manifest_version": 2,
+  "name": "HateSpeech",
+  "version": "1.0",
 
-    "manifest_version": 2,
-    "name": "HateSpeech",
-    "version": "1.0",
+  "description": "A hatespeech detection and mitigation extension",
 
-    "description": "A hatespeech detection and mitigation extension",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*"
+  ],
 
-    "permissions": [
-        "activeTab",
-        "storage",
-        "*://127.0.0.1/*"
-    ],
+  "browser_action": {
+    "default_title": "HateSpeech",
+    "default_popup": "src/popup/options.html"
+  },
 
-    "browser_action": {
-        "default_title": "HateSpeech",
-        "default_popup": "src/popup/options.html"
-    },
-
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js" : ["src/getText.js"],
-        "run_at" : "document_start"
-      }
-    ],
-
-    "applications": {
-      "gecko": {
-        "id": "hatespeech@group_project"
-      }
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/getText.js"],
+      "run_at": "document_start"
     }
+  ],
+
+  "applications": {
+    "gecko": {
+      "id": "hatespeech@group_project"
+    }
+  }
 }

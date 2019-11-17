@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hatespeech Plugin Tests - Unwanted Text</title>
+</head>
+<body>
+
+<style>
+h1 {color:red;}
+p {color:blue;}
+</style>
+
+<h1>Hatespeech Plugin Tests - Unwanted Text</h1>
+
+<p>This is a page with some CSS, JavaScript and other unneeded elements.
+The plugin should exclude text inside STYLE and SCRIPT element nodes.</p>
+
+<script type="application/javascript">
+    let x = 4;
+    let y = x * 2;
+    let array = [1, 2, 3, 4];
+</script>
+
+<p>Some meaningful text</p>
+
+</body>
+</html> 

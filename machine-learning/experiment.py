@@ -11,6 +11,8 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import SGDClassifier
+from sklearn import metrics
+from sklearn.utils.class_weight import compute_class_weight
 
 STOP_WORDS = stopwords.words('english')
 
@@ -111,7 +113,8 @@ def demo(model, vectorizer):
         print(answer)
 
 
-def train(model, X_train, y_train, X_val, y_val, epochs, batch_size):
+def train(model, X_train, y_train, X_val, y_val, epochs, batch_size,
+          print_every=32):
     # Training loop
     # We implement our own loop instead of one call to sklearn's fit()
     # for better customizability and allow for minibatch learning.
@@ -119,7 +122,7 @@ def train(model, X_train, y_train, X_val, y_val, epochs, batch_size):
 
     print("Begin training loop...")
     for epoch in range(1, epochs + 1):
-        print("Epoch {}".format(epoch))
+        # print("Epoch {}".format(epoch))
 
         # SGD preparation
         shuffle_data(X_train, y_train)
@@ -127,12 +130,31 @@ def train(model, X_train, y_train, X_val, y_val, epochs, batch_size):
 
         # SGD
         for batch_idx, (inputs, labels) in enumerate(batches):
-            print("Epoch {} Batch {}".format(epoch, batch_idx))
+            # if batch_idx % print_every == 0:
+            #     print("Epoch {} Batch {}".format(epoch, batch_idx))
             # Handles everything else (feed forward -> back prop -> update)
             model.partial_fit(inputs, labels, classes=[0, 1])
 
-        print("Epoch {} Train accuracy {}".format(epoch, model.score(X_train, y_train)))
-        print("Epoch {} Val accuracy {}".format(epoch, model.score(X_val, y_val)))
+        y_train_pred = model.predict(X_train)
+        accuracy = metrics.accuracy_score(y_train, y_train_pred)
+        precision = metrics.precision_score(y_train, y_train_pred)
+        recall = metrics.precision_score(y_train, y_train_pred)
+        f1 = metrics.f1_score(y_train, y_train_pred)
+        print(
+            "Epoch {:<4} Train Acc {:.4f} Prec {:.4f} Rec {:.4f} F1 {:.4f}".format(
+                epoch, accuracy, precision, recall, f1))
+
+        y_val_pred = model.predict(X_val)
+        accuracy = metrics.accuracy_score(y_val, y_val_pred)
+        precision = metrics.precision_score(y_val, y_val_pred)
+        recall = metrics.precision_score(y_val, y_val_pred)
+        f1 = metrics.f1_score(y_val, y_val_pred)
+        print(
+            "Epoch {:<4} Val   Acc {:.4f} Prec {:.4f} Rec {:.4f} F1 {:.4f}".format(
+                epoch, accuracy, precision, recall, f1))
+        print("---")
+
+        # print("Epoch {} Val accuracy {}".format(epoch, model.score(X_val, y_val)))
 
 
 def main():
@@ -150,12 +172,22 @@ def main():
     print("Splitting data...")
     test_size = 0.4
     batch_size = 64
-    epochs = 10
+    epochs = 100
     X_train, X_test, y_train, y_test = train_test_split(
         X_all, y_all, test_size=test_size)
 
+    # For unbalanced data set. SGDClassifier requires a dict
+    class_weights = compute_class_weight("balanced", [0, 1], y_train)
+    class_weight_dict = {0: class_weights[0], 1: class_weights[1]}
+
     # TODO: set and tune hyperparameters
-    model = SGDClassifier()
+    model = SGDClassifier(
+        loss="log",
+        penalty="l2",
+        learning_rate="constant",
+        eta0=0.03,
+        class_weight=class_weight_dict
+    )
 
     # TODO: validation set or k-fold CV
     X_val = X_test

@@ -1,8 +1,20 @@
 import pickle
+import dataset as ds
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import f1_score
 
 clf = pickle.load(open("./hate_speech_classifier", 'rb'))
 count_vec = pickle.load(open("./hate_speech_CountVectorizer", 'rb'))
+
+df_train = ds.get_davison_test()
+y_true = []
+y_pred = []
+
+for i in range(len(df_train[0])):
+    y_true.append(df_train[0][i])
+    y_pred.append(clf.predict(count_vec.transform([df_train[1][i]])))
+
+print(f1_score(y_true, y_pred, average='micro'))
 
 
 x_test = count_vec.transform(["apply this classifier to text & test if the outcome is good"])

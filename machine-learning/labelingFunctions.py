@@ -11,11 +11,6 @@ POSITIVE = 1
 NEGATIVE = 2
 
 # Filtering none hatespeech text
-@labeling_function()
-def lf_neg_short(df):
-    doc = df.at['tokens']
-    """Short text tends to be less hateful"""
-    return NEGATIVE if len(doc) < 5 else ABSTAIN
 
 @labeling_function()
 def lf_neg_nonehumansubject(df):

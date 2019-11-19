@@ -11,3 +11,6 @@ machine-learning/svm_hate_speech_CountVectorizer
 machine-learning/svm_hate_speech_classifier
 machine-learning/similarity.py
 machine-learning/py3env
+machine-learning/ft.train
+machine-learning/ft.test
+machine-learning/ft.bin

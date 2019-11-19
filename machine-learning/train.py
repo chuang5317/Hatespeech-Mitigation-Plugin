@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
 from sklearn.naive_bayes import GaussianNB
+import fasttext
 import random
 import nltk
 from nltk.corpus import wordnet as wn
@@ -21,7 +22,7 @@ NEGATIVE = 2
 df_train = ds.get_davison() #out performed combined dataset
 
 # Define the set of labeling functions (LFs)
-lfs = [lf.lf_neg_short, lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
+lfs = [lf.lf_keyword_strong_swearing, lf.lf_keyword_violence,
         lf.lf_spacy_words_sexism, lf.lf_keyword_raicism, lf.lf_spacy_words_gpe,
         lf.lf_keyword_shaming,  lf.lf_spacy_threat, lf.lf_spacy_terrorism,
         lf.lf_neg_nonehumansubject]

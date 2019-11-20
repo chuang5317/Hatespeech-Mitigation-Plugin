@@ -6,10 +6,15 @@
 
     "description": "A hatespeech detection and mitigation extension",
 
+    "background": {
+      "scripts": ["src/background.js"]
+    },
+
     "permissions": [
         "activeTab",
         "storage",
-        "*://127.0.0.1/*"
+        "*://127.0.0.1/*",
+        "contextMenus"
     ],
 
     "browser_action": {

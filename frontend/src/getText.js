@@ -70,7 +70,7 @@ function hatespeech_detection(root){
                 pos += allText[i].length;
                 if(pos >= result[hateSpeechIndex][0] && pos <= result[hateSpeechIndex][1]){
                   allText[i].parentNode.classList.add('blurry-text');
-                  console.log("blurred" + pos);
+                  // console.log("blurred" + pos);
                 }
                 if(pos > result[hateSpeechIndex][1]){
                   hateSpeechIndex++;

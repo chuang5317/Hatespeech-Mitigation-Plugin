@@ -33,5 +33,9 @@
   "icons": {
     "48": "icons/gate48.png",
     "96": "icons/gate96.png"
+  },
+
+  "options_ui": {
+    "page": "src/popup/settings.html"
   }
 }

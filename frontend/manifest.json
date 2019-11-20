@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "HateSpeech",
+  "name": "HateGate",
   "version": "1.0",
 
   "description": "A hatespeech detection and mitigation extension",
@@ -12,7 +12,7 @@
   ],
 
   "browser_action": {
-    "default_title": "HateSpeech",
+    "default_title": "HateGate",
     "default_popup": "src/popup/options.html"
   },
 
@@ -28,5 +28,10 @@
     "gecko": {
       "id": "hatespeech@group_project"
     }
+  },
+
+  "icons": {
+    "48": "icons/gate48.png",
+    "96": "icons/gate96.png"
   }
 }

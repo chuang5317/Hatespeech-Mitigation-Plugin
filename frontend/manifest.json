@@ -5,10 +5,15 @@
 
   "description": "A hatespeech detection and mitigation extension",
 
+  "background": {
+      "scripts": ["src/background.js"]
+    },
+
   "permissions": [
     "activeTab",
     "storage",
-    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*"
+    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
+    "contextMenus"
   ],
 
   "browser_action": {

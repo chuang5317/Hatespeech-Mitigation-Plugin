@@ -8,11 +8,13 @@ Plan:
 - ELMo contextualized embeddings + BiLSTM
 """
 
-import pandas as pd
-from utils import load_davidson, preprocess, tokenize, STOP_WORDS
-import torch
-from torch.utils.data import Dataset, DataLoader
 import numpy as np
+import torch
+from torch import nn
+from torch.nn.utils.rnn import pack_padded_sequence
+from torch.utils.data import Dataset
+
+from utils import preprocess, tokenize
 
 
 class Vocabulary(object):
@@ -92,6 +94,59 @@ def pad_sequences(sentence_ids, vocabulary):
         tmp.extend([vocabulary.PAD_IDX for _ in range(pad_length)])
         res.append(tmp)
     return res
+
+
+class HateSpeechLSTMClassifier(nn.Module):
+    def __init__(self,
+                 vocab_size,
+                 batch_size,
+                 pad_idx,
+                 embedding_dim=128,
+                 hidden_size=100,
+                 layers=1,
+                 dropout=0.,
+                 bidirectional=False):
+
+        self.layers = layers
+        self.hidden_size = hidden_size
+        self.batch_size = batch_size
+
+        self.embed = nn.Embedding(
+            num_embeddings=vocab_size,
+            embedding_dim=embedding_dim,
+            padding_idx= pad_idx
+        )
+
+        self.lstm = nn.LSTM(
+            input_size=embedding_dim,
+            hidden_size=hidden_size,
+            num_layers=layers,
+            batch_first=True,  # input/outputs are (batch, seq, feature)
+            dropout=dropout,
+            bidirectional=bidirectional
+        )
+
+        # O/1 classifier
+        self.dropout = nn.Dropout(p=dropout)
+        self.hidden_to_tag = nn.Linear(hidden_size, 2)
+        self.log_softmax = nn.LogSoftmax()
+
+    def init_hidden(self):
+        """ Initialize hidden states. """
+        h_0 = torch.randn(self.layers, self.batch_size, self.hidden_size)
+        c_0 = torch.randn(self.layers, self.batch_size, self.hidden_size)
+        return h_0, c_0
+
+    def forward(self, inputs, input_lengths):
+        self.hidden = self.init_hidden()
+        batch_size, seq_len, _ = inputs.shape
+        x = self.embed(inputs)
+        x = pack_padded_sequence(x, input_lengths, batch_first=True)
+        outputs, (ht, ct) = self.lstm(x, self.hidden)
+        output = self.dropout(ht[-1])
+        output = self.hidden_to_tag(output)
+        output = self.log_softmax(output)
+        return output
 
 
 if __name__ == "__main__":

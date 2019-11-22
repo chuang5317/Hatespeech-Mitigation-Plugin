@@ -10,25 +10,30 @@ Plan:
 
 import numpy as np
 import torch
+import torch.nn.functional as F
+from sklearn.metrics import f1_score, accuracy_score
 from torch import nn
+from torch import optim
 from torch.nn.utils.rnn import pack_padded_sequence
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
+from torch.utils.data.dataset import random_split
 
-from utils import preprocess, tokenize
+from utils import preprocess, tokenize, load_davidson
 
 
 class Vocabulary(object):
     """
     Closed vocabulary. Maps unique tokens to integer IDs and vice versa.
     """
+
     def __init__(self):
         self.PAD_IDX = 0
         self.OOV_IDX = 1
-        self.index = 2  # the next available index
+        self.index = 0  # the next available index
         self.token_to_idx = dict()
         self.idx_to_token = dict()
-        self.token_to_idx["<PAD>"] = 0
-        self.idx_to_token[0] = "<PAD>"
+        self.add_token("<PAD>")
+        self.add_token("<OOV>")
 
     def add_token(self, token):
         """ Add a new token and assign it an unique ID.s """
@@ -53,22 +58,27 @@ class Vocabulary(object):
                 vocab.add_token(token)
         return vocab
 
+    def __len__(self):
+        return len(self.token_to_idx)
+
 
 class DavidsonDataset(Dataset):
     """
     Helper class for PyTorch data loading.
     """
-    def __init__(self, inputs, labels):
+
+    def __init__(self, inputs, labels, input_lengths):
         """ Load dataset used in Davidson's paper. """
-        assert len(inputs) == len(labels)
+        assert len(inputs) == len(labels) == len(input_lengths)
         self.inputs = inputs
         self.labels = labels
+        self.input_lengths = input_lengths
 
     def __len__(self):
         return len(self.inputs)
 
     def __getitem__(self, item):
-        return self.inputs[item], self.labels[item]
+        return self.inputs[item], self.labels[item], self.input_lengths[item]
 
 
 def convert_to_idxs(sentences, vocabulary):
@@ -99,22 +109,22 @@ def pad_sequences(sentence_ids, vocabulary):
 class HateSpeechLSTMClassifier(nn.Module):
     def __init__(self,
                  vocab_size,
-                 batch_size,
                  pad_idx,
+                 device,
                  embedding_dim=128,
                  hidden_size=100,
                  layers=1,
                  dropout=0.,
                  bidirectional=False):
-
+        super().__init__()
+        self.device = device
         self.layers = layers
         self.hidden_size = hidden_size
-        self.batch_size = batch_size
 
         self.embed = nn.Embedding(
             num_embeddings=vocab_size,
             embedding_dim=embedding_dim,
-            padding_idx= pad_idx
+            padding_idx=pad_idx
         )
 
         self.lstm = nn.LSTM(
@@ -129,42 +139,152 @@ class HateSpeechLSTMClassifier(nn.Module):
         # O/1 classifier
         self.dropout = nn.Dropout(p=dropout)
         self.hidden_to_tag = nn.Linear(hidden_size, 2)
-        self.log_softmax = nn.LogSoftmax()
 
-    def init_hidden(self):
+    def init_hidden(self, batch_size):
         """ Initialize hidden states. """
-        h_0 = torch.randn(self.layers, self.batch_size, self.hidden_size)
-        c_0 = torch.randn(self.layers, self.batch_size, self.hidden_size)
+        h_0 = torch.randn(
+            self.layers, batch_size, self.hidden_size).to(self.device)
+        c_0 = torch.randn(
+            self.layers, batch_size, self.hidden_size).to(self.device)
         return h_0, c_0
 
-    def forward(self, inputs, input_lengths):
-        self.hidden = self.init_hidden()
-        batch_size, seq_len, _ = inputs.shape
+    def forward(self, inputs, input_lengths, batch_size):
+        self.hidden = self.init_hidden(batch_size)
         x = self.embed(inputs)
-        x = pack_padded_sequence(x, input_lengths, batch_first=True)
+        x = pack_padded_sequence(x, input_lengths, batch_first=True,
+                                 enforce_sorted=False)
         outputs, (ht, ct) = self.lstm(x, self.hidden)
         output = self.dropout(ht[-1])
         output = self.hidden_to_tag(output)
-        output = self.log_softmax(output)
+        output = F.log_softmax(output, dim=1)
         return output
 
 
+def split_dataset(dataset, ratios):
+    """ Split PyTorch dataset into train and validation.
+
+    Ratios: [test_fraction, valid_fraction, test_fraction]
+    Usually .6, .2, .2
+    """
+    assert sum(ratios) == 1
+    train, val, test = ratios
+    train_size = int(train * len(dataset))
+    val_size = int(val * len(dataset))
+    test_size = len(dataset) - train_size - val_size
+    train_set, val_set, test_set = random_split(
+        davidson_ds, [train_size, val_size, test_size])
+    return train_set, val_set, test_set
+
+
+def calculate_stats(y_true, y_pred):
+    f1 = f1_score(y_true, y_pred, average="binary")
+    acc = accuracy_score(y_true, y_pred)
+    # prec = precision_score(y_true, y_pred, average="binary")
+    # rec = recall_score(y_true, y_pred, average="binary")
+    return f1, \
+           acc, \
+        # prec,\
+    # rec
+
+
 if __name__ == "__main__":
-    # inputs, labels = load_davidson("./dataset/davison.csv")
-    inputs = [
-        "Mary had a little lamb...",
-        "The quick, brown Fox jumps over the lazy dog!!!",
-        "Hello, how are you today?",
-        "You should go and die!"
-    ]
-    labels = 0, 0, 0, 1
+
+    # PyTorch to device
+    device_name = "cuda" if torch.cuda.is_available() else "cpu"
+    print("Running model on {}...".format(device_name))
+    device = torch.device(device_name)
+
+    # Load data and preprocess
+    data_path = "./dataset/davison.csv"
+    print("Loading data from {}...".format(data_path))
+    inputs, labels = load_davidson(data_path)
+
+    print("Preprocessing, tokenizing and padding sequences...")
     inputs = preprocess(inputs)
     inputs = [tokenize(sent) for sent in inputs]
     vocab = Vocabulary.build(inputs)
     inputs = convert_to_idxs(inputs, vocab)
+    input_lengths = [len(seq) for seq in inputs]
     inputs = pad_sequences(inputs, vocab)
 
+    # Convert to PyTorch tensors for efficiency
     inputs = torch.tensor(inputs)
     labels = torch.tensor(labels)
+    input_lengths = torch.tensor(input_lengths)
 
-    davidson_ds = DavidsonDataset(inputs, labels)
+    # Training hyperparameters
+    train_batch_size = 64
+    val_batch_size = 512
+    learn_rate = 0.003
+    epochs = 100
+
+    print("Splitting data...")
+    davidson_ds = DavidsonDataset(inputs, labels, input_lengths)
+    train_set, val_set, test_set = split_dataset(davidson_ds, (0.6, 0.2, 0.2))
+    train_loader = DataLoader(train_set,
+                              batch_size=train_batch_size,
+                              shuffle=True,
+                              drop_last=True)
+    val_loader = DataLoader(val_set,
+                            batch_size=val_batch_size,
+                            shuffle=True,
+                            drop_last=True)
+
+    # Set up training
+    model = HateSpeechLSTMClassifier(len(vocab), vocab.PAD_IDX, device)
+    model = model.to(device)
+
+    criterion = nn.NLLLoss()
+    optimizer = optim.SGD(model.parameters(), lr=learn_rate)
+
+    print("Begin training...")
+    # Standard PyTorch training loop
+    # TODO: refactor into train() and evaluate() functions
+    eval_every = 4
+    for epoch in range(epochs):
+        model.train()
+        total_train_loss = 0.
+        for inputs, labels, input_lengths in train_loader:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            input_lengths = input_lengths.to(device)
+            model.zero_grad()
+            output = model(inputs, input_lengths, train_batch_size)
+            loss = criterion(output, labels)
+            total_train_loss += loss.item()
+            loss.backward()
+            # grad norm?
+            optimizer.step()
+        print("(Train) Epoch {} Loss {}".format(epoch + 1, total_train_loss))
+
+        if epoch % eval_every == 0:
+            model.eval()
+            with torch.no_grad():
+                loss_list = []
+                f1_list = []
+                acc_list = []
+                for inputs, labels, input_lengths in val_loader:
+                    inputs = inputs.to(device)
+                    labels = labels.to(device)
+                    input_lengths = input_lengths.to(device)
+                    output = model(inputs, input_lengths, val_batch_size)
+                    loss = criterion(output, labels)
+                    loss_list.append(loss.item())
+
+                    # Get stats
+                    # output was log softmax values, run max to give predicted
+                    # label. max() returns a tuple, the 2nd is the label ids
+                    _, output = output.cpu().max(dim=1)
+                    labels = labels.cpu()
+                    f1, acc = calculate_stats(labels, output)
+                    f1_list.append(f1)
+                    acc_list.append(acc)
+
+                loss_avg = np.mean(loss_list)
+                f1_avg = np.mean(f1_list)
+                acc_avg = np.mean(acc_list)
+
+                print(
+                    "(Eval) Epoch {:<4} Train Loss {:.4f} Val Loss {:.4f} Val F1 {:.4f} Val Acc {:.4f}".format(
+                        epoch + 1, total_train_loss, loss_avg, f1_avg, acc_avg))
+    print("Done.")

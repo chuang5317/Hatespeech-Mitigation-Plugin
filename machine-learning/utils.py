@@ -22,6 +22,8 @@ def preprocess(sentences):
     for sentence in sentences:
         # Convert to lower case and remove punctuation and remove numbers
         # Could remove stopwords, keep tweet hashtags, lemmatize, POS tag etc.
+        if len(sentence) == 0:
+            continue
         new_sentence = sentence.lower()
         new_sentence = new_sentence.translate(
             str.maketrans("", "", string.punctuation))

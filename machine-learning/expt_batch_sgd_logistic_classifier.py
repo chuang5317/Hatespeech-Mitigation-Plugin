@@ -9,27 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import SGDClassifier
 from sklearn import metrics
 from sklearn.utils.class_weight import compute_class_weight
-from .utils import preprocess, tokenize, STOP_WORDS
-
-
-def load_davidson(path):
-    """ Load dataset used in Davidson's paper. """
-    original = pd.read_csv(path)
-
-    # Only select relevant columns
-    # Relabel data to just the text and 0/1 (not/is hate speech)
-    HATESPEECH = 0
-    OFFENSIVE = 1
-    NEITHER = 2
-
-    df = original[["tweet", "class"]].copy()
-    hate_speech = df.index[df["class"] == HATESPEECH]
-    other = df.index[df["class"].isin([OFFENSIVE, NEITHER])]
-    df.loc[hate_speech, "class"] = 1
-    df.loc[other, "class"] = 0
-    texts = df["tweet"].tolist()
-    labels = df["class"].tolist()
-    return texts, labels
+from utils import preprocess, tokenize, STOP_WORDS, load_davidson
 
 
 def get_bag_of_words(sentences):

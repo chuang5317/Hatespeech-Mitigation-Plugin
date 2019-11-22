@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
-
+"""
+Experiment with sklearn's SGDClassifier and batch training.
+"""
 import re
 import string
 
@@ -172,7 +173,7 @@ def main():
     print("Splitting data...")
     test_size = 0.4
     batch_size = 64
-    epochs = 100
+    epochs = 1000
     X_train, X_test, y_train, y_test = train_test_split(
         X_all, y_all, test_size=test_size)
 

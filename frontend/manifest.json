@@ -1,38 +1,46 @@
 {
+  "manifest_version": 2,
+  "name": "HateGate",
+  "version": "1.0",
 
-    "manifest_version": 2,
-    "name": "HateSpeech",
-    "version": "1.0",
+  "description": "A hatespeech detection and mitigation extension",
 
-    "description": "A hatespeech detection and mitigation extension",
-
-    "background": {
+  "background": {
       "scripts": ["src/background.js"]
     },
+  
+  "permissions": [
+    "activeTab",
+    "storage",
+    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
+    "contextMenus"
+  ],
 
-    "permissions": [
-        "activeTab",
-        "storage",
-        "*://127.0.0.1/*",
-        "contextMenus"
-    ],
+  "browser_action": {
+    "default_title": "HateGate",
+    "default_popup": "src/popup/options.html"
+  },
 
-    "browser_action": {
-        "default_title": "HateSpeech",
-        "default_popup": "src/popup/options.html"
-    },
-
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js" : ["src/getText.js"],
-        "run_at" : "document_start"
-      }
-    ],
-
-    "applications": {
-      "gecko": {
-        "id": "hatespeech@group_project"
-      }
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/getText.js"],
+      "run_at": "document_start"
     }
+  ],
+
+  "applications": {
+    "gecko": {
+      "id": "hatespeech@group_project"
+    }
+  },
+
+  "icons": {
+    "48": "icons/gate48.png",
+    "96": "icons/gate96.png"
+  },
+
+  "options_ui": {
+    "page": "src/popup/settings.html"
+  }
 }

@@ -14,3 +14,7 @@ machine-learning/py3env
 machine-learning/ft.train
 machine-learning/ft.test
 machine-learning/ft.bin
+.vscode
+.eslintrc*
+.coverage
+package.json

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hatespeech Plugin Tests - Random Node Updates</title>
+</head>
+<body>
+
+<h1>Hatespeech Plugin Tests - Random Node Updates</h1>
+
+<p>This is a page that creates and deletes nodes randomly.</p>
+
+<p>Below is an empty list. List items will get added and deleted at random.</p>
+<ol id="dummy-ol"></ol>
+
+<script type="application/javascript">
+    const list = document.getElementById("dummy-ol");
+    function action() {
+        if (Math.random() < 0.5) {
+            // insert
+            if (list.childElementCount < 50) {
+                const node = document.createElement("li");
+                const textNode = document.createTextNode("A new item has appeared.");
+                node.appendChild(textNode);
+                list.appendChild(node);
+            }
+        } else {
+            // delete
+            if (list.childElementCount > 0) {
+                const i = Math.floor(Math.random() * list.childElementCount);
+                list.removeChild(list.childNodes[i]);
+            }
+        }
+        setTimeout(action, Math.floor(Math.random() * 250 + 250))
+    }
+    setTimeout(action, 1000);
+</script>
+
+</body>
+</html> 

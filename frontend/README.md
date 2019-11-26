@@ -1,6 +1,8 @@
 # Hatespeech-Mitigation-Plugin
 
-Read this to install the extension on firefox :
-https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension
+Read [this](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension) to install the extension on Firefox.
 
-[![CircleCI](https://circleci.com/gh/chuang5317/Hatespeech-Mitigation-Plugin.svg?style=svg)](https://circleci.com/gh/chuang5317/Hatespeech-Mitigation-Plugin)
+## Other notes/references
+
+- [Adblock Plus source code](https://github.com/adblockplus/adblockpluschrome): a good reference for UI code
+- [web-ext tool](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/): command-line tool that detects changes to the plugin source code and automatically reloads it in Firefox, saves a lot of time

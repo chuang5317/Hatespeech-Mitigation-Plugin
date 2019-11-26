@@ -1,11 +1,19 @@
 version: 2
 jobs:
-  build:
+  build_test_extension_firefox:
     docker:
-      - image: circleci/python:stretch
+      - image: circleci/node
     steps:
       - checkout
-  test:
+      - run:
+          command: |
+            cd frontend/
+            sudo npm install --global web-ext
+            web-ext lint
+            web-ext build
+      - store_artifacts:
+          path: ~/project/frontend/web-ext-artifacts/hatespeech-1.0.zip
+  test_backend:
     docker:
       - image: circleci/python:stretch
     steps:
@@ -20,11 +28,10 @@ jobs:
             coverage html
       - store_artifacts:
           path: ~/project/hatespeech_backend/htmlcov
+
 workflows:
   version: 2
-  build_and_test:
+  build:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      - build_test_extension_firefox
+      - test_backend

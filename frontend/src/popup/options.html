@@ -3,15 +3,23 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="options.css"/>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
   </head>
 <body>
-    <div id="popup-content">
-      <h5> Switch </h5>
-      <label class="switch">
-        <input type="checkbox">
-        <span class="slider round"></span>
-      </label>
+    <img src="images/logo.png" alt="Logo" style="max-width:100px">
+    <div class="container" id="popup-content">
+	    <div class="checkbox-container green">
+		    <input id="toggle-slider-input" type="checkbox"/>
+		    <label class="switch" for="toggle-slider-input"></label>
+	    	<div class="active-circle"></div>
+	    </div>
     </div>
+    <p>Categories:</p>
+    <input type="checkbox" id="racism">Racism
+    <span class="checkmark"></span><br>
+    <input type="checkbox" id="sexism">Sexism
+    <span class="checkmark"></span><br><br>
+    <input type="submit" value="Update" style="margin:0px auto; display:block; font-family: 'Raleway';" />
   <script src="options.js"></script>
 </body>
 </html>

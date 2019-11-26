@@ -1,6 +1,6 @@
 browser.contextMenus.create({
     id: "hatespeech-report",
-    title: "this is(n't) hatespeech",
+    title: "Blur",
     contexts: ["selection"],
 });
 
@@ -13,5 +13,3 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
         });
     }
 });
-
-

@@ -1,10 +1,6 @@
 import dataset as ds
 import labelingFunctions as lf
 from snorkel.labeling import LabelModel, PandasLFApplier
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn import svm
-from sklearn.naive_bayes import GaussianNB
 import fasttext
 import random
 import nltk
@@ -39,9 +35,6 @@ label_model = LabelModel(cardinality=3, verbose=True)
 label_model.fit(L_train, n_epochs=500, log_freq=50, seed=123)
 df_train["label"] = label_model.predict(L=L_train, tie_break_policy="abstain")
 
-#output
-df_train.to_csv('labelledDataset.csv', index = None, header = True)
-
 # Filter out useless data
 df_train = df_train[df_train.label != ABSTAIN]
 print("Useful data remaining: " + str(df_train.shape[0]))
@@ -53,29 +46,21 @@ print("Useful data remaining: " + str(df_train.shape[0]))
 
 # Training a Classifier
 docs = df_train.iloc[:,0].tolist() # first column of data frame (first_name)
-print(df_train)
 
 train_text = []
+train_label = []
 for doc in docs:
-    # print(doc.text)
     train_text.append(doc.text)
-# print(train_text)
+for i in range(df_train.shape[0]):
+    train_label.append("__label__" + str(df_train.iloc[i]['label']))
 
-count_vec = CountVectorizer(ngram_range=(1, 2))
-X_train = count_vec.fit_transform(train_text)
+nintypercent = (int)(df_train.shape[0] * 0.9)
 
-# Support Vector Machines
-# clf = svm.SVC(kernel='linear', C = 1.0)
-# clf.fit(X=X_train, y=df_train.label.values)
+#output to .train file for fast text
+ftrain = pd.DataFrame()
+ftrain[0] = train_label
+ftrain[1] = train_text
+ftrain.to_csv('ft.train', index = None, header = False, sep=' ')
 
-# Naive Bayes Classification
-# gnb = GaussianNB()
-# gnb.fit(X=X_train, y=df_train.label.values)
-
-# over
-clf = LogisticRegression(solver="lbfgs", max_iter=1000)
-clf.fit(X=X_train, y=df_train.label.values)
-
-# save the model to disk
-pickle.dump(clf, open("./hate_speech_classifier", 'wb'))
-pickle.dump(count_vec, open("./hate_speech_CountVectorizer", 'wb'))
+model = fasttext.train_supervised(input="ft.train", lr=1.0, epoch=25, wordNgrams=2)
+model.save_model("ft.bin")

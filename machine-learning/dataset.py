@@ -5,7 +5,7 @@ import spacy
 # import tweepy
 
 # All functions should return a Pandas DataFrame of spacy documents
-# e.g. "spacy" "tokens"        "label"
+# e.g. "spacy" "tokens"        "label"              .....more
 # 0    doc1    (list of words) (this colum will be created in train.py)
 # 1    doc2                     -
 # ...  ...      ...
@@ -33,11 +33,27 @@ def get_debug():
     texts = original.iloc[:,6].tolist()
     return pre.preprocess(texts)
 
+def get_combined():
+    addr1 = "./dataset/davison.csv"
+    original1 = pd.read_csv(addr1)
+    texts = original1.iloc[:,6].tolist()
+    addr2 = "./dataset/train_E6oV3lV.csv"
+    original2 = pd.read_csv(addr2)
+    texts += original2.iloc[:,2].tolist()
+    return pre.preprocess(texts)
+
 def get_davison():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
-    texts = original.iloc[:,6].tolist()
+    texts = original.iloc[:,6].tolist()[:24000]
     return pre.preprocess(texts)
+
+def get_davison_test():
+    addr = "./dataset/davison.csv"
+    original = pd.read_csv(addr)
+    texts = original.iloc[:,6].tolist()[24000:]
+    scores = original.iloc[:,5].tolist()[24000:]
+    return [scores, texts]
 
 # def lookup_tweets(tweet_IDs, api):
 #     full_tweets = []

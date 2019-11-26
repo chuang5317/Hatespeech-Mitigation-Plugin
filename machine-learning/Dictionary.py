@@ -15,7 +15,6 @@ def syntax_analyser(text):
     comprehend.detect_syntax(Text=text, LanguageCode='en')
     #next need to go through each JSON token, see if its an adj (PartsOfSpeech, TAG), if so check if it (Text) is in the dictionary above
 
-
 #returns an array of Strings, each a sentence. Takes in a string.
 def to_sentence(text):
     return tokenize.sent_tokenize(text)

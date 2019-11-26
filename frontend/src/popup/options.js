@@ -51,7 +51,7 @@ racism.addEventListener("change", function() {
 });
 
 var sexism = document.getElementById("sexism");
-racism.addEventListener("change", function() {
+sexism.addEventListener("change", function() {
   browser.storage.sync.set({
     SexismFiltered: sexism.checked
   });

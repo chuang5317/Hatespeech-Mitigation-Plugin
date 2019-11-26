@@ -17,8 +17,13 @@ from torch import optim
 from torch.nn.utils.rnn import pack_padded_sequence
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
+from torch.nn.utils import clip_grad_value_
+from matplotlib import pyplot as plt
 
 from utils import preprocess, tokenize, load_davidson
+from sklearn.utils import class_weight
+
+torch.set_printoptions(profile="full")
 
 
 class Vocabulary(object):
@@ -172,23 +177,105 @@ def split_dataset(dataset, ratios):
     val_size = int(val * len(dataset))
     test_size = len(dataset) - train_size - val_size
     train_set, val_set, test_set = random_split(
-        davidson_ds, [train_size, val_size, test_size])
+        dataset, [train_size, val_size, test_size])
     return train_set, val_set, test_set
 
 
-def calculate_stats(y_true, y_pred):
-    f1 = f1_score(y_true, y_pred, average="binary")
-    acc = accuracy_score(y_true, y_pred)
-    # prec = precision_score(y_true, y_pred, average="binary")
-    # rec = recall_score(y_true, y_pred, average="binary")
-    return f1, \
-           acc, \
-        # prec,\
-    # rec
+def train(model, criterion, optimizer, train_loader, train_batch_size, val_loader, val_batch_size, device, epochs, eval_every=4):
+
+    # For plotting learning curves
+    train_losses = []
+    train_accs = []
+    val_losses = []
+    val_accs = []
+
+    for epoch in range(epochs):
+        model.train()
+        total_train_loss = 0.
+        total_accuracy = 0.
+        for inputs, labels, input_lengths in train_loader:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            input_lengths = input_lengths.to(device)
+            model.zero_grad()
+            output = model(inputs, input_lengths, train_batch_size)
+            loss = criterion(output, labels)
+            total_train_loss += loss.item()
+            _, preds = output.max(dim=1)
+            acc = (labels == preds).sum().item() / labels.shape[0]
+            total_accuracy += acc
+
+            loss.backward()
+            clip_grad_value_(model.parameters(), 5.)
+            optimizer.step()
+
+        avg_loss = total_train_loss / len(train_loader)
+        avg_acc = total_accuracy / len(train_loader)
+        train_losses.append(avg_loss)
+        train_accs.append(avg_acc)
+
+        print("(Train) Epoch {} Loss {:.4f} Acc {:.4f}".format(epoch + 1, avg_loss, avg_acc))
+
+        if (epoch + 1) % eval_every == 0:
+            model.eval()
+            loss, accuracy, f1 = evaluate(model, criterion, val_loader,
+                                          val_batch_size, device)
+            val_losses.append(loss)
+            val_accs.append(accuracy)
+
+    if eval_every == 1:
+        assert len(train_losses) == len(val_losses)
+        x_axis = np.arange(0, len(train_losses))
+        plt.plot(x_axis, train_losses, label='train loss')
+        plt.plot(x_axis, val_losses, label='validation loss')
+        plt.legend()
+        plt.show()
+
+        plt.plot(x_axis, train_accs, label='train accuracy')
+        plt.plot(x_axis, val_accs, label='validation accuracy')
+        plt.legend()
+        plt.show()
 
 
-if __name__ == "__main__":
+def evaluate(model, loss_function, val_data_loader, val_batch_size, device):
+    """ Evaluate the model and return mean loss, accuracy and F1. """
+    with torch.no_grad():
+        loss_list = []
+        acc_list = []
+        y_pred_batches = []
+        y_true_batches = []
+        for inputs, labels, input_lengths in val_data_loader:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            input_lengths = input_lengths.to(device)
+            output = model(inputs, input_lengths, val_batch_size)
+            loss = loss_function(output, labels)
+            loss_list.append(loss.item())
 
+            # Need to move values from GPU to CPU for sklearn score calculations
+            _, outputs = output.cpu().max(dim=1)
+            labels = labels.cpu()
+
+            acc = accuracy_score(labels, outputs)
+            acc_list.append(acc)
+
+            y_pred_batches.append(outputs)
+            y_true_batches.append(labels)
+
+        loss_avg = np.mean(loss_list)
+        acc_avg = np.mean(acc_list)
+
+        # Might be faster to concatenate batches at the end rather than
+        # appending each row to the list in the validation loop
+        y_pred = torch.cat(y_pred_batches, dim=0)
+        y_true = torch.cat(y_true_batches, dim=0)
+        f1_avg = f1_score(y_true, y_pred, average="binary")
+
+        print("(Val)   Loss {:.4f} F1 {:.4f} Acc {:.4f}".format(loss_avg, f1_avg, acc_avg))
+        return loss_avg, acc_avg, f1_avg
+
+
+def main():
     # PyTorch to device
     device_name = "cuda" if torch.cuda.is_available() else "cpu"
     print("Running model on {}...".format(device_name))
@@ -212,11 +299,17 @@ if __name__ == "__main__":
     labels = torch.tensor(labels)
     input_lengths = torch.tensor(input_lengths)
 
+    # class weights for unbalanced data
+    class_weights = class_weight.compute_class_weight("balanced",
+                                                      np.array([0, 1]),
+                                                      labels.numpy())
+    class_weights = torch.FloatTensor(class_weights).to(device)
+
     # Training hyperparameters
     train_batch_size = 64
-    val_batch_size = 512
+    val_batch_size = 64
     learn_rate = 0.003
-    epochs = 100
+    epochs = 1000
 
     print("Splitting data...")
     davidson_ds = DavidsonDataset(inputs, labels, input_lengths)
@@ -231,60 +324,19 @@ if __name__ == "__main__":
                             drop_last=True)
 
     # Set up training
-    model = HateSpeechLSTMClassifier(len(vocab), vocab.PAD_IDX, device)
+    model = HateSpeechLSTMClassifier(len(vocab), vocab.PAD_IDX, device, layers=2, dropout=0.5)
     model = model.to(device)
 
-    criterion = nn.NLLLoss()
+    criterion = nn.NLLLoss(weight=class_weights)
     optimizer = optim.SGD(model.parameters(), lr=learn_rate)
 
     print("Begin training...")
-    # Standard PyTorch training loop
-    # TODO: refactor into train() and evaluate() functions
-    eval_every = 4
-    for epoch in range(epochs):
-        model.train()
-        total_train_loss = 0.
-        for inputs, labels, input_lengths in train_loader:
-            inputs = inputs.to(device)
-            labels = labels.to(device)
-            input_lengths = input_lengths.to(device)
-            model.zero_grad()
-            output = model(inputs, input_lengths, train_batch_size)
-            loss = criterion(output, labels)
-            total_train_loss += loss.item()
-            loss.backward()
-            # grad norm?
-            optimizer.step()
-        print("(Train) Epoch {} Loss {}".format(epoch + 1, total_train_loss))
+    train(model, criterion, optimizer, train_loader, train_batch_size,
+          val_loader, val_batch_size, device, epochs, eval_every=20)
+    evaluate(model, criterion, val_loader, val_batch_size, device)
 
-        if epoch % eval_every == 0:
-            model.eval()
-            with torch.no_grad():
-                loss_list = []
-                f1_list = []
-                acc_list = []
-                for inputs, labels, input_lengths in val_loader:
-                    inputs = inputs.to(device)
-                    labels = labels.to(device)
-                    input_lengths = input_lengths.to(device)
-                    output = model(inputs, input_lengths, val_batch_size)
-                    loss = criterion(output, labels)
-                    loss_list.append(loss.item())
-
-                    # Get stats
-                    # output was log softmax values, run max to give predicted
-                    # label. max() returns a tuple, the 2nd is the label ids
-                    _, output = output.cpu().max(dim=1)
-                    labels = labels.cpu()
-                    f1, acc = calculate_stats(labels, output)
-                    f1_list.append(f1)
-                    acc_list.append(acc)
-
-                loss_avg = np.mean(loss_list)
-                f1_avg = np.mean(f1_list)
-                acc_avg = np.mean(acc_list)
-
-                print(
-                    "(Eval) Epoch {:<4} Train Loss {:.4f} Val Loss {:.4f} Val F1 {:.4f} Val Acc {:.4f}".format(
-                        epoch + 1, total_train_loss, loss_avg, f1_avg, acc_avg))
     print("Done.")
+
+
+if __name__ == "__main__":
+    main()

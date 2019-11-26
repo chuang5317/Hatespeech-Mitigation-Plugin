@@ -18,7 +18,7 @@ def home():
         results = []
         for node in nodes:
             # "hatespeech" value to be replaced by NLP engine's decision
-            res = {"id": node["id"], "result": bool(str(detect(node["text"])))}
+            res = {"id": node["id"], "result": bool(1 if detect(node["text"])else 0)}
             results.append(res)
         return json.dumps({"result": results})
 

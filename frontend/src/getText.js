@@ -211,7 +211,7 @@ function detectHatespeech(root) {
         .then(response => {
           response.json().then(hatespeechInfo => {
             console.log(hatespeechInfo)
-            blurHatespeechNodes(hatespeechInfo);
+            blurHatespeechNodes(hatespeechInfo.result);
           });
         })
         .catch(error => {

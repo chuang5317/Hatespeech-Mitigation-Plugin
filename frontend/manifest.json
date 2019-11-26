@@ -12,6 +12,7 @@
   "permissions": [
     "activeTab",
     "storage",
+    "*://127.0.0.1/*",
     "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
     "contextMenus"
   ],

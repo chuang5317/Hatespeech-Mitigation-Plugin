@@ -172,10 +172,10 @@ function blurNode(textNode) {
  */
 function blurHatespeechNodes(hatespeechInfo) {
   hatespeechInfo.forEach(info => {
-    // for now, expect info = {id: <node id>, hatespeech: <boolean>}
+    // for now, expect info = {id: <node id>, result: <boolean>}
     const node = nodeManager.getNode(info.id);
     // const isHatespeech = info.hatespeech;
-    const isHatespeech = info.result;
+    // const isHatespeech = info.result;
     console.log(isHatespeech);
     if (isHatespeech) {
       blurNode(node);

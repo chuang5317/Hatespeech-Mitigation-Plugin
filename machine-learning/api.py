@@ -11,15 +11,17 @@ app = Flask(__name__)
 def home():
     if request.method == 'POST':
         data = request.json
+        print(data)
         nodes = data["nodes"]
 
         # Expect a list of [{"id": <int>, "text": <str>}]
         results = []
         for node in nodes:
             # "hatespeech" value to be replaced by NLP engine's decision
-            res = {"id": node["id"], "hatespeech": "true" if detect(node["text"]) else "false"}
+            res = {"id": node["id"], "result": bool(str(detect(node["text"])))}
             results.append(res)
-        return jsonify({"result": results})
+        return json.dumps({"result": results})
+
 
 nlp = spacy.load('en_core_web_sm') 
 clf = pickle.load(open("./hate_speech_classifier", 'rb'))

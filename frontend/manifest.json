@@ -1,18 +1,23 @@
 {
   "manifest_version": 2,
-  "name": "HateSpeech",
+  "name": "HateGate",
   "version": "1.0",
 
   "description": "A hatespeech detection and mitigation extension",
 
+  "background": {
+      "scripts": ["src/background.js"]
+    },
+
   "permissions": [
     "activeTab",
     "storage",
-    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*"
+    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
+    "contextMenus"
   ],
 
   "browser_action": {
-    "default_title": "HateSpeech",
+    "default_title": "HateGate",
     "default_popup": "src/popup/options.html"
   },
 
@@ -28,5 +33,14 @@
     "gecko": {
       "id": "hatespeech@group_project"
     }
+  },
+
+  "icons": {
+    "48": "icons/gate48.png",
+    "96": "icons/gate96.png"
+  },
+
+  "options_ui": {
+    "page": "src/popup/settings.html"
   }
 }

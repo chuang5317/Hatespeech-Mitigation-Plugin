@@ -13,7 +13,6 @@ def home():
         data = request.json
         print(data)
         nodes = data["nodes"]
-
         # Expect a list of [{"id": <int>, "text": <str>}]
         results = []
         for node in nodes:

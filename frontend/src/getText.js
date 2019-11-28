@@ -206,22 +206,19 @@ function detectHatespeech(root) {
             for(i = 0; i < allText.length; i++){
               oldPos = pos;
               pos += allText[i].length;
-              tempPos = pos;
-              start = result[hateSpeechIndex][0];
+              start = result[hateSpeechIndex][0]
+              while(pos > result[hateSpeechIndex][0]){
+                hateSpeechIndex++;
+              }
               end = result[hateSpeechIndex][1];
               if(pos >= start && pos <= end){
                 textNodePosInParent = getChildNodeIndex(allText[i]);
-                lower = Math.max(result[hateSpeechIndex][0] - oldPos, 0);
-                upper = Math.max(result[hateSpeechIndex][1] - pos, 0);
+                lower = Math.max(start - oldPos, 0);
+                upper = Math.min(end - oldPos, allText[i].length);
                 nodeValue = allText[i].nodeValue;
-                prevText = nodeValue.substr(oldPos, lower);
+                prevText = nodeValue.substr(0, lower);
                 curText = nodeValue.substr(lower, upper);
-                afterText = nodeValue.substr(upper, pos);
-                // console.log("lower is " + lower + ", upper is" + upper);
-                // console.log("text in node :" + allText[i].nodeValue);
-                // console.log("prevText :" + prevText  + " size is " + prevText.length);
-                // console.log("curText :" + curText + " size is " + curText.length);
-                // console.log("afterText :" + afterText + " size is " + afterText.length);
+                afterText = nodeValue.substr(upper, allText[i].length);
                 parentNode = allText[i].parentNode;
                 nextNode = allText[i].nextSibling;
                 allText[i].remove();
@@ -229,21 +226,14 @@ function detectHatespeech(root) {
                   prevNode = document.createTextNode(prevText);
                   parentNode.insertBefore(prevNode, nextNode);
                 }
-                blurNode = document.createElement("a");
+                blurNode = document.createElement("span");
                 blurNode.appendChild(document.createTextNode(curText));
                 blurNode.classList.add('blurry-text');
                 parentNode.insertBefore(blurNode, nextNode);
                 if(afterText.length > 0){
                   afterNode = document.createTextNode(afterText);
                   parentNode.insertBefore(afterNode, nextNode);
-                  //in case of multiple sentences in one node: 
-                  allText[i] = afterNode;
-                  pos -= allText[i].length;
-                  i--;
                 }
-              }
-              if(tempPos > end){
-                hateSpeechIndex++;
               }
               if(hateSpeechIndex >= result.length){
                 break;

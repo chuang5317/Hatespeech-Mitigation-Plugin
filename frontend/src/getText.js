@@ -151,7 +151,7 @@ function fetchHatespeechInfo(data) {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "text/plain"
     }
   };
   return fetch(apiUrl, fetchData);
@@ -165,20 +165,11 @@ function blurNode(textNode) {
   textNode.parentNode.classList.add("blurry-text");
 }
 
-/**
- * Blur text nodes.
- * @param textNodes - array of text nodes
- * @param hatespeechInfo - array returned by service
- */
-function blurHatespeechNodes(hatespeechInfo) {
-  hatespeechInfo.forEach(info => {
-    // for now, expect info = {id: <node id>, result: <boolean>}
-    const node = nodeManager.getNode(info.id);
-    const isHatespeech = info.result;
-    if (isHatespeech) {
-      blurNode(node);
-    }
-  });
+function getChildNodeIndex(child){
+  var i = 0;
+  while( (child = child.previousSibling) != null ) 
+    i++;
+  return i;
 }
 
 /**
@@ -192,17 +183,14 @@ function detectHatespeech(root) {
   function onGot(item) {
     if (item.HateSpeechOn) {
       const allText = walkNodeTree(root); //visit the dom
-      const nodesToJson = allText.map(node => {
-        const id = nodeManager.getID(node);
-        if(id == undefined){
-          nodeManager.addNode(node);
-          id = nodeManager.getID(node);
-        }
-        return { id: id, text: node.textContent };
-      });
-      console.log(nodesToJson)
+      let str = "";
+      for (let i = 0; i < allText.length; i++) {
+          str = str + allText[i].nodeValue;
+      }
+      // console.log(nodesToJson)
       // Fetch the ranges to blur from the locally running service
-      const response = fetchHatespeechInfo({ nodes: nodesToJson });
+      const response = fetchHatespeechInfo(str);
+      // console.log("here");
       response
         .then(response => {
           if (!response.ok) {
@@ -211,8 +199,56 @@ function detectHatespeech(root) {
           return response;
         })
         .then(response => {
-          response.json().then(hatespeechInfo => {
-            blurHatespeechNodes(hatespeechInfo.result);
+          response.json().then(result => {
+            pos = 0;
+            hateSpeechIndex = 0;
+            i = 0;
+            for(i = 0; i < allText.length; i++){
+              oldPos = pos;
+              pos += allText[i].length;
+              tempPos = pos;
+              start = result[hateSpeechIndex][0];
+              end = result[hateSpeechIndex][1];
+              if(pos >= start && pos <= end){
+                textNodePosInParent = getChildNodeIndex(allText[i]);
+                lower = Math.max(result[hateSpeechIndex][0] - oldPos, 0);
+                upper = Math.max(result[hateSpeechIndex][1] - pos, 0);
+                nodeValue = allText[i].nodeValue;
+                prevText = nodeValue.substr(oldPos, lower);
+                curText = nodeValue.substr(lower, upper);
+                afterText = nodeValue.substr(upper, pos);
+                // console.log("lower is " + lower + ", upper is" + upper);
+                // console.log("text in node :" + allText[i].nodeValue);
+                // console.log("prevText :" + prevText  + " size is " + prevText.length);
+                // console.log("curText :" + curText + " size is " + curText.length);
+                // console.log("afterText :" + afterText + " size is " + afterText.length);
+                parentNode = allText[i].parentNode;
+                nextNode = allText[i].nextSibling;
+                allText[i].remove();
+                if(prevText.length > 0){
+                  prevNode = document.createTextNode(prevText);
+                  parentNode.insertBefore(prevNode, nextNode);
+                }
+                blurNode = document.createElement("a");
+                blurNode.appendChild(document.createTextNode(curText));
+                blurNode.classList.add('blurry-text');
+                parentNode.insertBefore(blurNode, nextNode);
+                if(afterText.length > 0){
+                  afterNode = document.createTextNode(afterText);
+                  parentNode.insertBefore(afterNode, nextNode);
+                  //in case of multiple sentences in one node: 
+                  allText[i] = afterNode;
+                  pos -= allText[i].length;
+                  i--;
+                }
+              }
+              if(tempPos > end){
+                hateSpeechIndex++;
+              }
+              if(hateSpeechIndex >= result.length){
+                break;
+              }
+            }
           });
         })
         .catch(error => {

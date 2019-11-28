@@ -174,9 +174,7 @@ function blurHatespeechNodes(hatespeechInfo) {
   hatespeechInfo.forEach(info => {
     // for now, expect info = {id: <node id>, result: <boolean>}
     const node = nodeManager.getNode(info.id);
-    // const isHatespeech = info.hatespeech;
-    // const isHatespeech = info.result;
-    console.log(isHatespeech);
+    const isHatespeech = info.result;
     if (isHatespeech) {
       blurNode(node);
     }
@@ -196,9 +194,13 @@ function detectHatespeech(root) {
       const allText = walkNodeTree(root); //visit the dom
       const nodesToJson = allText.map(node => {
         const id = nodeManager.getID(node);
+        if(id == undefined){
+          nodeManager.addNode(node);
+          id = nodeManager.getID(node);
+        }
         return { id: id, text: node.textContent };
       });
-
+      console.log(nodesToJson)
       // Fetch the ranges to blur from the locally running service
       const response = fetchHatespeechInfo({ nodes: nodesToJson });
       response
@@ -210,7 +212,6 @@ function detectHatespeech(root) {
         })
         .then(response => {
           response.json().then(hatespeechInfo => {
-            console.log(hatespeechInfo)
             blurHatespeechNodes(hatespeechInfo.result);
           });
         })

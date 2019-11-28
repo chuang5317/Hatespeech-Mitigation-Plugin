@@ -45,14 +45,14 @@ def get_combined():
 def get_davison():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
-    texts = original.iloc[:,6].tolist()[:24000]
+    texts = original.iloc[:,6].tolist()[:20000]
     return pre.preprocess(texts)
 
 def get_davison_test():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
-    texts = original.iloc[:,6].tolist()[24000:]
-    scores = original.iloc[:,5].tolist()[24000:]
+    texts = original.iloc[:,6].tolist()[20000:]
+    scores = original.iloc[:,5].tolist()[20000:]
     return [scores, texts]
 
 # def lookup_tweets(tweet_IDs, api):

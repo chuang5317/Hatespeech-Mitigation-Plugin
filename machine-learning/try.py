@@ -1,7 +1,8 @@
 import pickle
 import dataset as ds
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
 
 clf = pickle.load(open("./hate_speech_classifier", 'rb'))
 count_vec = pickle.load(open("./hate_speech_CountVectorizer", 'rb'))
@@ -52,6 +53,9 @@ def trac_f1score():
         y_pred.append(p_case)
 
     print(f1_score(y_true, y_pred, average='macro'))
+    print(precision_score(y_true, y_pred))
+    print(recall_score(y_true, y_pred))
+
 
 trac_f1score()
 

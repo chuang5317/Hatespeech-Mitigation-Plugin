@@ -15,7 +15,12 @@ bootbox.dialog({
                const apiUrl = "https://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech";
                 let fetchData = {
                   method: "POST",
-                  body: JSON.stringify(text),
+                  body: JSON.stringify(
+                    {
+                      "sentence": text,
+                      "label": "Racist"
+                    }
+                  ),
                   headers: {
                     "Content-Type": "application/json"
                   }
@@ -29,7 +34,12 @@ bootbox.dialog({
               const apiUrl = "https://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech";
                let fetchData = {
                  method: "POST",
-                 body: JSON.stringify(text),
+                 body: JSON.stringify(
+                   {
+                     "sentence": text,
+                     "label": "Sexist"
+                   }
+                 ),
                  headers: {
                    "Content-Type": "application/json"
                  }
@@ -43,7 +53,12 @@ bootbox.dialog({
               const apiUrl = "https://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech";
                let fetchData = {
                  method: "POST",
-                 body: JSON.stringify(text),
+                 body: JSON.stringify(
+                   {
+                     "sentence": text,
+                     "label": "Offensive"
+                   }
+                 ),
                  headers: {
                    "Content-Type": "application/json"
                  }
@@ -57,7 +72,12 @@ bootbox.dialog({
               const apiUrl = "https://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech";
                let fetchData = {
                  method: "POST",
-                 body: JSON.stringify(text),
+                 body: JSON.stringify(
+                   {
+                     "sentence": text,
+                     "label": "Non-offensive"
+                   }
+                 ),
                  headers: {
                    "Content-Type": "application/json"
                  }

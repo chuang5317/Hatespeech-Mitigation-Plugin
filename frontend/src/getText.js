@@ -21,7 +21,7 @@ function isUsefulNode(node) {
   // We don't want these.
   let isParentOk =
     node.parentNode === null ||
-    !["STYLE", "SCRIPT"].includes(node.parentNode.nodeName);
+    !["STYLE", "SCRIPT", "NOSCRIPT"].includes(node.parentNode.nodeName);
   return (
     node.nodeType === Node.TEXT_NODE && !isAllWhiteSpace(node) && isParentOk
   );

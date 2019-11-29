@@ -55,6 +55,13 @@ def get_davison_test():
     scores = original.iloc[:,5].tolist()[20000:]
     return [scores, texts]
 
+def get_trac_test():
+    addr = "./dataset/agr_en_dev.csv"
+    original = pd.read_csv(addr)
+    texts = original.iloc[:,1]
+    scores = original.iloc[:,2]
+    return [scores, texts]
+
 # def lookup_tweets(tweet_IDs, api):
 #     full_tweets = []
 #     tweet_count = len(tweet_IDs)

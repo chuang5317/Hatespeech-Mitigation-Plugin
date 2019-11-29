@@ -15,6 +15,7 @@ machine-learning/ft.train
 machine-learning/ft.test
 machine-learning/ft.bin
 machine-learning/labelled.train
+machine-learning/cnn.h5
 .vscode
 .eslintrc*
 .coverage

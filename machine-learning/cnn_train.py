@@ -9,7 +9,7 @@ def get_cnn_davison():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
     texts = original.iloc[:,6].tolist()
-    labels = list(map((lambda x: 1 if x == 1 else 0),  original.iloc[:,5].tolist()))
+    labels = list(map((lambda x: 2 if x == 2 else 0),  original.iloc[:,5].tolist()))
     train = (texts[:10000], labels[:10000])
     validation = (texts[10000:20000], labels[10000:20000])
     test = (texts[20000:], labels[20000:])

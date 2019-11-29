@@ -20,3 +20,4 @@ machine-learning/cnn.h5
 .eslintrc*
 .coverage
 package.json
+node_modules/

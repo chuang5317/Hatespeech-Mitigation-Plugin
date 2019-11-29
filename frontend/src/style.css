@@ -1,0 +1,8 @@
+.hatespeech-selection-panel {
+  display: block;
+  position: fixed;
+  bottom: 0px;
+  background-color: rgb(255, 241, 204);
+  width: 100%;
+  padding: 0.5em 0px 0.5em 0.5em;
+}

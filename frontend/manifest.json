@@ -6,7 +6,7 @@
   "description": "A hatespeech detection and mitigation extension",
 
   "background": {
-    "scripts":["src/background.js"]
+    "scripts": ["src/background.js"]
   },
 
   "permissions": [
@@ -14,7 +14,8 @@
     "storage",
     "*://127.0.0.1/*",
     "contextMenus",
-    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*"
+    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
+    "*://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech"
   ],
 
   "browser_action": {
@@ -22,7 +23,8 @@
     "default_popup": "src/popup/options.html"
   },
 
-  "content_scripts": [{
+  "content_scripts": [
+    {
       "matches": ["<all_urls>"],
       "js": ["src/getText.js"],
       "run_at": "document_start"

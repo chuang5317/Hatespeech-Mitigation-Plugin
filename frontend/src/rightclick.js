@@ -70,4 +70,4 @@ document.body.appendChild(button);
 // {
 //     "matches": ["<all_urls>"],
 //     "js": ["src/rightclick.js"]
-//   },  
+//   },

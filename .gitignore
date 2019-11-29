@@ -19,3 +19,4 @@ machine-learning/labelled.train
 .eslintrc*
 .coverage
 package.json
+node_modules/

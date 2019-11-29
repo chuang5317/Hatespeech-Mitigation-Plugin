@@ -2,10 +2,6 @@ from hatesonar import Sonar
 import dataset as ds
 from sklearn.metrics import f1_score
 
-sonar = Sonar()
-x = sonar.ping(text="At least I'm not a nigger")
-print(x['text'])
-
 df_train = ds.get_trac_test()
 y_true = []
 y_pred = []

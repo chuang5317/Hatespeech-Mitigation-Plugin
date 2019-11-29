@@ -1,6 +1,24 @@
 //adding dependencies :
 //bootstrap css
 
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                return allText;
+            }
+        }
+    }
+    rawFile.send(null);
+}
+
 var link = document.createElement("link");
 link.rel = "stylesheet";
 link.type = "text/css";
@@ -35,17 +53,9 @@ document.body.appendChild(scriptBootBox);
 
 var scriptDialog = document.createElement("script");
 scriptDialog.type = "text/javascript";
-alert("1");
-var code = FileReaderSync.readAsText("./panel.js");
-alert(code);
-// code = "$(document).on(\"click\", \"#hatespeechhack\", function(e) {\n" + 
-// "   bootbox.alert(\"Hello wWQEFFFFFFFFFFFFFFwe!\", function() {\n" +
-// "      console.log(\"Alert 234\");\n" +
-// "   });\n"+
-// "});"; 
+file = readTextFile('file:///home/tianyi/newbranch/frontend/src/panel.js');
 try {
     scriptDialog.appendChild(document.createTextNode(code));
-    document.scriptDialog.appendChild(s);
 } catch (e) {
     scriptDialog.text = code;
     document.body.appendChild(scriptDialog);
@@ -55,3 +65,9 @@ var button = document.createElement('button');
 button.textContent = "CLICK ME PLEASE!";
 button.id = "hatespeechhack";
 document.body.appendChild(button);
+
+
+// {
+//     "matches": ["<all_urls>"],
+//     "js": ["src/rightclick.js"]
+//   },  

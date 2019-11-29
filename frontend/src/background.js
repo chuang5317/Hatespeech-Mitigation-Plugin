@@ -7,7 +7,7 @@ browser.contextMenus.create({
 browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "hatespeech-report") {
         browser.tabs.executeScript(tab.id,{
-            file : "src/panel.js"
+            file : "src/panel-browser.js"
         }).catch((error) => {
             console.error("Failed to send text: " + error);
         });

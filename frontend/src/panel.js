@@ -1,33 +1,42 @@
-$(document).on("click", "#hatespeechhack", function(e) {
-  alert("aloha");
-  selectedText = window.getSelection().toString();
-  bootbox.dialog({
-    title: 'A custom dialog with buttons and callbacks',
-    message: selectedText,
-    size: 'large',
+require("jquery");
+require('bootstrap'); //bootbox not self contained!!
+//please read the bootbox documentation !!
+var bootbox = require('bootbox');
+text = window.getSelection().toString();
+bootbox.dialog({
+    title: 'Report incorrect classification',
+    message: text,
+    size: 'medium',
     buttons: {
-        cancel: {
-            label: "I'm a cancel button!",
-            className: 'btn-danger',
+        racist: {
+            label: "Racist",
             callback: function(){
-                console.log('Custom cancel clicked');
+                //
             }
         },
-        noclose: {
-            label: "I don't close the modal!",
-            className: 'btn-warning',
+        sexist: {
+            label: "Sexist",
             callback: function(){
-                console.log('Custom button clicked');
-                return false;
+                //
             }
         },
-        ok: {
-            label: "I'm an OK button!",
-            className: 'btn-info',
+        offensive: {
+            label: "Offensive",
             callback: function(){
-                console.log('Custom OK clicked');
+                //
+            }
+        },
+        nonoffensive: {
+            label: "Non-offensive",
+            callback: function(){
+                //
+            }
+        }, 
+        close: {
+            label: "Close",
+            callback: function(){
+                //
             }
         }
     }
-  });
-})
+});

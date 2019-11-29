@@ -262,6 +262,14 @@ function getRandomColor() {
   return color;
 }
 
+var link = document.createElement("link");
+link.rel = "stylesheet";
+link.type = "text/css";
+link.href = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css";
+link.integrity = "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh";
+link.crossOrigin="anonymous";
+document.head.appendChild(link);
+
 // Note to self: DOMContentLoaded is when the initial HTML document is completely loaded and parsed,
 // WITHOUT waiting for stylesheets, images and subframes to finish loading, as opposed to the usual "load".
 document.addEventListener("DOMContentLoaded", event => {

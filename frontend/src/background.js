@@ -1,6 +1,6 @@
 browser.contextMenus.create({
     id: "hatespeech-report",
-    title: "Report Incorrect Classification",
+    title: "Report incorrect classification",
     contexts: ["selection"],
 });
 

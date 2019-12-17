@@ -167,7 +167,7 @@ function blurNode(textNode) {
 
 function getChildNodeIndex(child){
   var i = 0;
-  while( (child = child.previousSibling) != null ) 
+  while( (child = child.previousSibling) != null )
     i++;
   return i;
 }
@@ -273,13 +273,27 @@ document.head.appendChild(link);
 // Note to self: DOMContentLoaded is when the initial HTML document is completely loaded and parsed,
 // WITHOUT waiting for stylesheets, images and subframes to finish loading, as opposed to the usual "load".
 document.addEventListener("DOMContentLoaded", event => {
-  var style = document.createElement("style");
-  style.type = "text/css";
-  style.innerHTML =
-    ".blurry-text {\nfilter:blur(5px);\n}\n" +
-    ".blurry-text:hover {\nfilter:none;\n}";
-  document.getElementsByTagName("head")[0].appendChild(style);
+function onError(error) {
+   console.log(`Error: ${error}`);
+ }
 
+ function onGot(item) {
+   var style = document.createElement("style");
+   style.type = "text/css";
+   if (item.RevealOnHover) {
+     style.innerHTML = ".blurry-text {\nfilter:blur(5px);\n}\n";
+   } else {
+     style.innerHTML =
+       ".blurry-text {\nfilter:blur(5px);\n}\n" +
+       ".blurry-text:hover {\nfilter:none;\n}";
+   }
+   document.getElementsByTagName("head")[0].appendChild(style);
+ }
+
+ var getting = browser.storage.sync.get("RevealOnHover");
+ getting.then(onGot, onError);
+
+  console.log('success');
   populateNodeManager(document.body);
   detectHatespeech(document.body);
 });

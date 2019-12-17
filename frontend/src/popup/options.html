@@ -7,19 +7,20 @@
   </head>
 <body>
     <img src="images/logo.png" alt="Logo" style="max-width:100px">
-    <div class="container" id="popup-content">
-	    <div class="checkbox-container green">
-		    <input id="toggle-slider-input" type="checkbox">
-		    <label class="switch" for="toggle-slider-input"></label>
-	    	<div class="active-circle"></div>
-	    </div>
-    </div>
+	   <div class="onoffswitch">
+		   <input id="toggle-slider-input" type="checkbox" class="onoffswitch-checkbox" checked>
+		   <label class="onoffswitch-label" for="toggle-slider-input">
+         <span class="onoffswitch-inner"></span>
+         <span class="onoffswitch-switch"></span>
+       </label>
+	    <div class="active-circle"></div>
+	   </div>
     <p>Categories:</p>
     <input type="checkbox" id="racism" checked>Racism
-    <span class="checkmark"></span><br>
+    <br>
     <input type="checkbox" id="sexism" checked>Sexism
-    <span class="checkmark"></span><br><br>
-    <input type="submit" value="Update" style="margin:0px auto; display:block; font-family: 'Raleway';" />
-  <script src="options.js"></script>
+    <br><br>
+    <input type="submit" value="Update" style="margin: 0px auto; display: block; font-family: 'Raleway';">
+    <script src="options.js"></script>
 </body>
 </html>

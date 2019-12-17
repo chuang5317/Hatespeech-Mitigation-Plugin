@@ -1,6 +1,6 @@
 function restoreOptions() {
   function setCurrentChoice(item) {
-    checkbox = document.getElementById("toggle-blur-effect");
+    checkbox = document.getElementById("toggle-hover-effect");
     checkbox.checked = item.RevealOnHover;
   }
   function onError(error) {
@@ -10,7 +10,7 @@ function restoreOptions() {
   blurEffectSwitch.then(setCurrentChoice, onError);
 }
 
-var checkbox = document.getElementById("toggle-blur-effect");
+var checkbox = document.getElementById("toggle-hover-effect");
 checkbox.addEventListener("change", function() {
   browser.storage.sync.set({
     RevealOnHover: checkbox.checked

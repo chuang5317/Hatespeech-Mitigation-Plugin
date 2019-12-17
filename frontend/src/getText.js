@@ -111,7 +111,9 @@ function walkNodeTree(root) {
     } else {
       const observer = new MutationObserver(onNewContentAdded);
       // Start observing the target node for configured mutations
-      observer.observe(node, { childList: true });
+      observer.observe(node, {
+        childList: true
+      });
       // Later, you can stop observing
       // observer.disconnect();
       if (node.firstChild) {
@@ -165,9 +167,9 @@ function blurNode(textNode) {
   textNode.parentNode.classList.add("blurry-text");
 }
 
-function getChildNodeIndex(child){
+function getChildNodeIndex(child) {
   var i = 0;
-  while( (child = child.previousSibling) != null )
+  while ((child = child.previousSibling) != null)
     i++;
   return i;
 }
@@ -180,12 +182,13 @@ function detectHatespeech(root) {
   function onError(error) {
     alert(`Error: ${error}`);
   }
+
   function onGot(item) {
     if (item.HateSpeechOn) {
       const allText = walkNodeTree(root); //visit the dom
       let str = "";
       for (let i = 0; i < allText.length; i++) {
-          str = str + allText[i].nodeValue;
+        str = str + allText[i].nodeValue;
       }
       // console.log(nodesToJson)
       // Fetch the ranges to blur from the locally running service
@@ -203,15 +206,15 @@ function detectHatespeech(root) {
             pos = 0;
             hateSpeechIndex = 0;
             i = 0;
-            for(i = 0; i < allText.length; i++){
+            for (i = 0; i < allText.length; i++) {
               oldPos = pos;
               pos += allText[i].length;
               start = result[hateSpeechIndex][0]
-              while(pos > result[hateSpeechIndex][0]){
+              while (pos > result[hateSpeechIndex][0]) {
                 hateSpeechIndex++;
               }
               end = result[hateSpeechIndex][1];
-              if(pos >= start && pos <= end){
+              if (pos >= start && pos <= end) {
                 textNodePosInParent = getChildNodeIndex(allText[i]);
                 lower = Math.max(start - oldPos, 0);
                 upper = Math.min(end - oldPos, allText[i].length);
@@ -222,7 +225,7 @@ function detectHatespeech(root) {
                 parentNode = allText[i].parentNode;
                 nextNode = allText[i].nextSibling;
                 allText[i].remove();
-                if(prevText.length > 0){
+                if (prevText.length > 0) {
                   prevNode = document.createTextNode(prevText);
                   parentNode.insertBefore(prevNode, nextNode);
                 }
@@ -230,12 +233,12 @@ function detectHatespeech(root) {
                 blurNode.appendChild(document.createTextNode(curText));
                 blurNode.classList.add('blurry-text');
                 parentNode.insertBefore(blurNode, nextNode);
-                if(afterText.length > 0){
+                if (afterText.length > 0) {
                   afterNode = document.createTextNode(afterText);
                   parentNode.insertBefore(afterNode, nextNode);
                 }
               }
-              if(hateSpeechIndex >= result.length){
+              if (hateSpeechIndex >= result.length) {
                 break;
               }
             }
@@ -267,33 +270,32 @@ link.rel = "stylesheet";
 link.type = "text/css";
 link.href = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css";
 link.integrity = "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh";
-link.crossOrigin="anonymous";
+link.crossOrigin = "anonymous";
 document.head.appendChild(link);
 
 // Note to self: DOMContentLoaded is when the initial HTML document is completely loaded and parsed,
 // WITHOUT waiting for stylesheets, images and subframes to finish loading, as opposed to the usual "load".
 document.addEventListener("DOMContentLoaded", event => {
-function onError(error) {
-   console.log(`Error: ${error}`);
- }
+  function onError(error) {
+    console.log(`Error: ${error}`);
+  }
 
- function onGot(item) {
-   var style = document.createElement("style");
-   style.type = "text/css";
-   if (item.RevealOnHover) {
-     style.innerHTML = ".blurry-text {\nfilter:blur(5px);\n}\n";
-   } else {
-     style.innerHTML =
-       ".blurry-text {\nfilter:blur(5px);\n}\n" +
-       ".blurry-text:hover {\nfilter:none;\n}";
-   }
-   document.getElementsByTagName("head")[0].appendChild(style);
- }
+  function onGot(item) {
+    var style = document.createElement("style");
+    style.type = "text/css";
+    if (item.RevealOnHover) {
+      style.innerHTML = ".blurry-text {\nfilter:blur(5px);\n}\n";
+    } else {
+      style.innerHTML =
+        ".blurry-text {\nfilter:blur(5px);\n}\n" +
+        ".blurry-text:hover {\nfilter:none;\n}";
+    }
+    document.getElementsByTagName("head")[0].appendChild(style);
+  }
 
- var getting = browser.storage.sync.get("RevealOnHover");
- getting.then(onGot, onError);
+  var getting = browser.storage.sync.get("RevealOnHover");
+  getting.then(onGot, onError);
 
-  console.log('success');
   populateNodeManager(document.body);
   detectHatespeech(document.body);
 });

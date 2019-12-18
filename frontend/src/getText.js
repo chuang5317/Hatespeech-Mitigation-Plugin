@@ -273,7 +273,6 @@ function injectBootstrapCSS() {
 	link.integrity = "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh";
 	link.crossOrigin = "anonymous";
 	document.head.appendChild(link);
-	console.log("d000dette");
 }
 
 // Note to self: DOMContentLoaded is when the initial HTML document is completely loaded and parsed,

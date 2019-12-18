@@ -91,5 +91,5 @@ bootbox.dialog({
       }
     }
   },
-  className: "hatespeech-selection-panel"
+  className: "s"
 });

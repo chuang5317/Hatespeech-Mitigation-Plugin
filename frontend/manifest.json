@@ -27,7 +27,8 @@
     {
       "matches": ["<all_urls>"],
       "js": ["src/getText.js"],
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "css": ["src/style.css"]
     }
   ],
 

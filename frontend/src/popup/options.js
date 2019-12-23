@@ -10,34 +10,10 @@ function restoreOptions() {
   hatespeechSwitch.then(setCurrentChoice, onError);
 }
 
-function restoreRacismCategory() {
-  function setCurrentChoice(item) {
-    racism = document.getElementById("racism");
-    racism.checked = item.RacismFiltered;
-  }
-  function onError(error) {
-    console.log(`Error: ${error}`);
-  }
-  var racismCheckbox = browser.storage.sync.get("RacismFiltered");
-  racismCheckbox.then(setCurrentChoice, onError);
-}
-
-function restoreSexismCategory() {
-  function setCurrentChoice(item) {
-    sexism = document.getElementById("sexism");
-    sexism.checked = item.SexismFiltered;
-  }
-  function onError(error) {
-    console.log(`Error: ${error}`);
-  }
-  var sexismCheckbox = browser.storage.sync.get("SexismFiltered");
-  sexismCheckbox.then(setCurrentChoice, onError);
-}
-
 function restoreFirstCustomCategory() {
   function setCurrentCategory(item) {
     firstCategory = document.getElementById("firstCategory");
-    firstCategory.value = item.firstCustomSetting;
+    firstCategory.value = item.firstCustomSetting || '';
   }
 
   function onError(error) {
@@ -51,7 +27,7 @@ function restoreFirstCustomCategory() {
 function restoreSecondCustomCategory() {
   function setCurrentCategory(item) {
     secondCategory = document.getElementById("secondCategory");
-    secondCategory.value = item.secondCustomSetting;
+    secondCategory.value = item.secondCustomSetting || '';
   }
 
   function onError(error) {
@@ -71,20 +47,6 @@ checkbox.addEventListener("change", function() {
   browser.tabs.reload();
 });
 
-var racism = document.getElementById("racism");
-racism.addEventListener("change", function() {
-  browser.storage.sync.set({
-    RacismFiltered: racism.checked
-  });
-});
-
-var sexism = document.getElementById("sexism");
-sexism.addEventListener("change", function() {
-  browser.storage.sync.set({
-    SexismFiltered: sexism.checked
-  });
-});
-
 var firstCategory = document.getElementById("firstCategory");
 firstCategory.addEventListener("input", function() {
   browser.storage.sync.set({
@@ -100,7 +62,5 @@ secondCategory.addEventListener("input", function() {
 });
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.addEventListener("DOMContentLoaded", restoreRacismCategory);
-document.addEventListener("DOMContentLoaded", restoreSexismCategory);
 document.addEventListener("DOMContentLoaded", restoreFirstCustomCategory);
 document.addEventListener("DOMContentLoaded", restoreSecondCustomCategory);

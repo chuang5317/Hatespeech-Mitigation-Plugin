@@ -5,6 +5,10 @@ html, body {
     font-family: 'Raleway';
   }
 
+  input[type="text"] {
+    width: 95px;
+  }
+
   .onoffswitch {
       position: relative; width: 100px; margin-top: 10px;
       -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;

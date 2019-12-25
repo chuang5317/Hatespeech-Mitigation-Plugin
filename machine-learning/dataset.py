@@ -61,35 +61,3 @@ def get_trac_test():
     texts = original.iloc[:,1]
     scores = original.iloc[:,2]
     return [scores, texts]
-
-# def lookup_tweets(tweet_IDs, api):
-#     full_tweets = []
-#     tweet_count = len(tweet_IDs)
-#     try:
-#         for i in range((tweet_count / 100) + 1):
-#             # Catch the last group if it is less than 100 tweets
-#             end_loc = min((i + 1) * 100, tweet_count)
-#             full_tweets.extend(
-#                 api.statuses_lookup(id=tweet_IDs[i * 100:end_loc])
-#             )
-#         return full_tweets
-#     except tweepy.TweepError:
-#         print 'Something went wrong, quitting...'
-
-# consumer_key = 'XXX'
-# consumer_secret = 'XXX'
-# access_token = 'XXX'
-# access_token_secret = 'XXX'
-
-# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-# auth.set_access_token(access_token, access_token_secret)
-
-# api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-
-# # do whatever it is to get por.TweetID - the list of all IDs to look up
-
-# results = lookup_tweets(por.TweetID, api)
-
-# for tweet in results:
-#     if tweet:
-#         print tweet.text

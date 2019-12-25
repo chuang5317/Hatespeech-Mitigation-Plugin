@@ -18,6 +18,22 @@ def get_cnn_davison():
     test = (texts[20000:],  labels[20000:])
     return (train, validation, test)
 
+def get_trac_train():
+    addr = "./dataset/agr_en_train.csv"
+    original = pd.read_csv(addr)
+    texts = original.iloc[:,1].tolist()
+    labels = list(map(lambda x : 0 if x == "NAG" else (1 if x == "CAG" else 2), original.iloc[:,2].tolist()))
+    together = (texts, labels)
+    return (together[:10000], together[10000:])
+  
+def get_trac_test():
+    addr = "./dataset/agr_en_dev.csv"
+    original = pd.read_csv(addr)
+    texts = original.iloc[:,1].tolist()
+    labels = list(map(lambda x : 0 if x == "NAG" else (1 if x == "CAG" else 2), original.iloc[:,2].tolist()))
+    together = (texts, labels)
+    return together
+
 (train, validation, test) = get_cnn_davison()
 train_data = tf.data.Dataset.from_tensor_slices(train)
 test_data = tf.data.Dataset.from_tensor_slices(test)

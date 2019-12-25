@@ -105,7 +105,7 @@ estimator = tf.estimator.Estimator(model_fn, 'OUTPUT_DIR', params={"batch_size":
 # A method to get predictions
 def getPrediction(in_sentences):
 
-  labels = ["Hatespeech", "Offensive Language","Neither"]
+  labels = ["Hatespeech", "Offensive Language", "Neither"]
 
   #Transforming the test data into BERT accepted form
   input_examples = [run_classifier.InputExample(guid="", text_a = x, text_b = None, label = 0) for x in in_sentences] 
@@ -118,5 +118,4 @@ def getPrediction(in_sentences):
   predictions = estimator.predict(predict_input_fn, yield_single_examples=False)
   return [(sentence, prediction['probabilities'], prediction['labels'], labels[prediction['labels']]) for sentence, prediction in zip(in_sentences, predictions)]
 
-print(getPrediction(["Niggers fuck off and leave my country"]))
-print(getPrediction(["Who would like to get some nice little cakes?"]))
+print(getPrediction(["Sentence here"]))

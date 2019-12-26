@@ -12,10 +12,10 @@ function restoreOptions() {
 
 function restoreFirstCustomCategory() {
   function setCurrentCategory(item) {
-    firstCategory = document.getElementById("cats_list");
-    console.log(item);
-    for(var i = 0; i < item.length; i++) {
-      firstCategory.innerHTML =  "hola";
+    let firstCategory = document.getElementById("cats_list");
+    firstCategory.innerHTML = ""
+    for(var i = 0; i < item.firstCustomSetting.length; i++) {
+      firstCategory.innerHTML =  firstCategory.innerHTML + "<li>" + item.firstCustomSetting[i] + "</li>";
     }
   }
 
@@ -25,6 +25,10 @@ function restoreFirstCustomCategory() {
 
   var firstCustomSetting = browser.storage.sync.get("firstCustomSetting");
   firstCustomSetting.then(setCurrentCategory, onError);
+}
+
+function updateCategoryList(item) {
+
 }
 
 var checkbox = document.getElementById("toggle-slider-input");
@@ -39,25 +43,30 @@ checkbox.addEventListener("change", function() {
 function addCategory() {
   console.log("ewewewew");
   let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
-    if(setting == null) {
-      console.log("d00d pls");
-      existingCats = array();
+    if(setting.firstCustomSetting == null) {
+      console.log("se hizo mierda");
+      setting = [];
+    } else {
+      let midValue = setting.firstCustomSetting;
+      setting = midValue;
     }
 
-    //console.log(existingCats);
+    console.log("dewd");
 
     let newCat = document.getElementById("firstCategory").value;
 
-    console.log(newCat);
+    console.log("puiuuu" + newCat);
 
-    console.log("deed");
-    setting.append(newCat);
-    console.log("existingCats");
+    setting.push(newCat);
+    console.log("pinche mamut");
     console.log(setting);
 
     browser.storage.sync.set({
-      firstCustomSetting: existingCats
+      firstCustomSetting: setting
     });
+
+    console.log("reeeee");
+    restoreFirstCustomCategory();
   });
 }
 

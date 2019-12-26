@@ -12,8 +12,11 @@ function restoreOptions() {
 
 function restoreFirstCustomCategory() {
   function setCurrentCategory(item) {
-    firstCategory = document.getElementById("firstCategory");
-    firstCategory.value = item.firstCustomSetting || '';
+    firstCategory = document.getElementById("cats_list");
+    console.log(item);
+    for(var i = 0; i < item.length; i++) {
+      firstCategory.innerHTML =  "hola";
+    }
   }
 
   function onError(error) {
@@ -22,20 +25,6 @@ function restoreFirstCustomCategory() {
 
   var firstCustomSetting = browser.storage.sync.get("firstCustomSetting");
   firstCustomSetting.then(setCurrentCategory, onError);
-}
-
-function restoreSecondCustomCategory() {
-  function setCurrentCategory(item) {
-    secondCategory = document.getElementById("secondCategory");
-    secondCategory.value = item.secondCustomSetting || '';
-  }
-
-  function onError(error) {
-    console.log(`Error: ${error}`);
-  }
-
-  var secondCustomSetting = browser.storage.sync.get("secondCustomSetting");
-  secondCustomSetting.then(setCurrentCategory, onError);
 }
 
 var checkbox = document.getElementById("toggle-slider-input");
@@ -47,20 +36,38 @@ checkbox.addEventListener("change", function() {
   browser.tabs.reload();
 });
 
-var firstCategory = document.getElementById("firstCategory");
-firstCategory.addEventListener("input", function() {
-  browser.storage.sync.set({
-    firstCustomSetting: firstCategory.value
-  });
-});
+function addCategory() {
+  console.log("ewewewew");
+  let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
+    if(setting == null) {
+      console.log("d00d pls");
+      existingCats = array();
+    }
 
-var secondCategory = document.getElementById("secondCategory");
-secondCategory.addEventListener("input", function() {
-  browser.storage.sync.set({
-    secondCustomSetting: secondCategory.value
+    //console.log(existingCats);
+
+    let newCat = document.getElementById("firstCategory").value;
+
+    console.log(newCat);
+
+    console.log("deed");
+    setting.append(newCat);
+    console.log("existingCats");
+    console.log(setting);
+
+    browser.storage.sync.set({
+      firstCustomSetting: existingCats
+    });
   });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('addBtn');
+    // onClick's logic below:
+    btn.addEventListener('click', function() {
+        addCategory();
+    });
 });
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.addEventListener("DOMContentLoaded", restoreFirstCustomCategory);
-document.addEventListener("DOMContentLoaded", restoreSecondCustomCategory);

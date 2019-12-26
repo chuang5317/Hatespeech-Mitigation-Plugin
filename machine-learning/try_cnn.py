@@ -15,6 +15,6 @@ sigmoid = tf.keras.layers.Dense(1, activation='sigmoid')
 model = keras.models.load_model("cnn.h5", custom_objects={'KerasLayer': embedding_layer})
 
 model.summary()
-print(model.predict(["Any other results?"])) 
+print(model.predict(["sample sentence"])) 
 #CNN is not working, predicts everything as 0.9+ to get low loss and high accuracy!!
 

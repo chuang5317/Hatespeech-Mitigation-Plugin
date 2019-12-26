@@ -7,6 +7,9 @@ import tensorflow_datasets as tfds
 
 print("Tensorflow version : " + tf.__version__ + ", requires version : 2.20")
 
+# This is a single label, binary classification CNN
+
+#Unbalanced ds, too much hatespeech
 def get_cnn_davison():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
@@ -18,23 +21,24 @@ def get_cnn_davison():
     test = (texts[20000:],  labels[20000:])
     return (train, validation, test)
 
-def get_trac_train():
-    addr = "./dataset/agr_en_train.csv"
+# A better one, maybe
+def get_cnn_toxic():
+    addr = "./dataset/jigsaw-toxic-comment-classification-challenge/train.csv"
     original = pd.read_csv(addr)
+    print(len(original))
     texts = original.iloc[:,1].tolist()
-    labels = list(map(lambda x : 0 if x == "NAG" else (1 if x == "CAG" else 2), original.iloc[:,2].tolist()))
-    together = (texts, labels)
-    return (together[:10000], together[10000:])
-  
-def get_trac_test():
-    addr = "./dataset/agr_en_dev.csv"
-    original = pd.read_csv(addr)
-    texts = original.iloc[:,1].tolist()
-    labels = list(map(lambda x : 0 if x == "NAG" else (1 if x == "CAG" else 2), original.iloc[:,2].tolist()))
-    together = (texts, labels)
-    return together
+    separate = original.iloc[:,2:]
+    labels = []
+    for i in range(len(original)):
+        rowList = separate.iloc[i].tolist()
+        labels.append(1 if 1 in rowList else 0)
+    # print(labels)
+    train = (texts[:75000], labels[:75000])
+    validation = (texts[75000:130000], labels[75000:130000])
+    test = (texts[130000:],  labels[130000:])
+    return (train, validation, test)
 
-(train, validation, test) = get_cnn_davison()
+(train, validation, test) = get_cnn_toxic()
 train_data = tf.data.Dataset.from_tensor_slices(train)
 test_data = tf.data.Dataset.from_tensor_slices(test)
 validation_data = tf.data.Dataset.from_tensor_slices(validation)
@@ -46,10 +50,11 @@ model.add(tf.keras.layers.Dense(16, activation='relu'))
 model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
 model.summary()
 model.compile(optimizer='adam',
-              loss='mean_squared_error',
+              loss='binary_crossentropy',
               metrics=['accuracy'])
+# overfits after epoch 2 -- val_loss increases and val_accuracy decrease
 history = model.fit(train_data.shuffle(10000).batch(512),
-                    epochs=20,
+                    epochs=2,
                     validation_data=validation_data.batch(512),
                     verbose=1)
 results = model.evaluate(test_data.batch(512), verbose=2)

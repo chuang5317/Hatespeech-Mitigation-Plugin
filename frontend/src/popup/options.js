@@ -13,9 +13,26 @@ function restoreOptions() {
 function restoreFirstCustomCategory() {
   function setCurrentCategory(item) {
     let firstCategory = document.getElementById("cats_list");
-    firstCategory.innerHTML = ""
+    firstCategory.innerHTML = "";
     for(var i = 0; i < item.firstCustomSetting.length; i++) {
-      firstCategory.innerHTML =  firstCategory.innerHTML + "<li>" + item.firstCustomSetting[i] + "</li>";
+      let li = document.createElement("li");
+      li.innerHTML = item.firstCustomSetting[i]  + " - ";
+
+      let deleteLink = document.createElement("a");
+      deleteLink.href = "#";
+      deleteLink.innerHTML = "X";
+      deleteLink.id = item.firstCustomSetting[i];
+
+      deleteLink.addEventListener("click", function() {
+        let elementToDelete = deleteLink.id;
+        deleteItem(elementToDelete);
+      });
+
+      li.appendChild(deleteLink);
+
+      firstCategory.appendChild(li);
+
+      //firstCategory.innerHTML =  firstCategory.innerHTML + "<li>" + item.firstCustomSetting[i] + "</li>";
     }
   }
 
@@ -27,8 +44,16 @@ function restoreFirstCustomCategory() {
   firstCustomSetting.then(setCurrentCategory, onError);
 }
 
-function updateCategoryList(item) {
+function deleteItem(item) {
+  let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
+    let settings = setting.firstCustomSetting;
+    let newSettings = settings.filter(set => item != set);
+    browser.storage.sync.set({
+      firstCustomSetting: newSettings
+    });
 
+    restoreFirstCustomCategory();
+  });
 }
 
 var checkbox = document.getElementById("toggle-slider-input");
@@ -41,31 +66,32 @@ checkbox.addEventListener("change", function() {
 });
 
 function addCategory() {
+  //browser.storage.sync.set({firstCustomSetting: []});
   console.log("ewewewew");
   let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
+    console.log("lmao");
     if(setting.firstCustomSetting == null) {
-      console.log("se hizo mierda");
+      console.log("dude pls");
       setting = [];
     } else {
       let midValue = setting.firstCustomSetting;
       setting = midValue;
     }
 
-    console.log("dewd");
+    console.log(setting);
 
     let newCat = document.getElementById("firstCategory").value;
 
-    console.log("puiuuu" + newCat);
-
+    console.log("puiuuu " + newCat);
+    if(setting.includes(newCat)) {
+      return
+    }
     setting.push(newCat);
-    console.log("pinche mamut");
-    console.log(setting);
-
+      
     browser.storage.sync.set({
       firstCustomSetting: setting
     });
-
-    console.log("reeeee");
+    document.getElementById("firstCategory").value = "";
     restoreFirstCustomCategory();
   });
 }

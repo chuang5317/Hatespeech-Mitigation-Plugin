@@ -87,7 +87,7 @@ function addCategory() {
       return
     }
     setting.push(newCat);
-      
+
     browser.storage.sync.set({
       firstCustomSetting: setting
     });
@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // onClick's logic below:
     btn.addEventListener('click', function() {
         addCategory();
+        browser.tabs.reload();
     });
 });
 

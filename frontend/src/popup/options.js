@@ -12,8 +12,28 @@ function restoreOptions() {
 
 function restoreFirstCustomCategory() {
   function setCurrentCategory(item) {
-    firstCategory = document.getElementById("firstCategory");
-    firstCategory.value = item.firstCustomSetting || '';
+    let firstCategory = document.getElementById("cats_list");
+    firstCategory.innerHTML = "";
+    for(var i = 0; i < item.firstCustomSetting.length; i++) {
+      let li = document.createElement("li");
+      li.innerHTML = item.firstCustomSetting[i]  + " - ";
+
+      let deleteLink = document.createElement("a");
+      deleteLink.href = "#";
+      deleteLink.innerHTML = "X";
+      deleteLink.id = item.firstCustomSetting[i];
+
+      deleteLink.addEventListener("click", function() {
+        let elementToDelete = deleteLink.id;
+        deleteItem(elementToDelete);
+      });
+
+      li.appendChild(deleteLink);
+
+      firstCategory.appendChild(li);
+
+      //firstCategory.innerHTML =  firstCategory.innerHTML + "<li>" + item.firstCustomSetting[i] + "</li>";
+    }
   }
 
   function onError(error) {
@@ -24,18 +44,16 @@ function restoreFirstCustomCategory() {
   firstCustomSetting.then(setCurrentCategory, onError);
 }
 
-function restoreSecondCustomCategory() {
-  function setCurrentCategory(item) {
-    secondCategory = document.getElementById("secondCategory");
-    secondCategory.value = item.secondCustomSetting || '';
-  }
+function deleteItem(item) {
+  let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
+    let settings = setting.firstCustomSetting;
+    let newSettings = settings.filter(set => item != set);
+    browser.storage.sync.set({
+      firstCustomSetting: newSettings
+    });
 
-  function onError(error) {
-    console.log(`Error: ${error}`);
-  }
-
-  var secondCustomSetting = browser.storage.sync.get("secondCustomSetting");
-  secondCustomSetting.then(setCurrentCategory, onError);
+    restoreFirstCustomCategory();
+  });
 }
 
 var checkbox = document.getElementById("toggle-slider-input");
@@ -47,20 +65,45 @@ checkbox.addEventListener("change", function() {
   browser.tabs.reload();
 });
 
-var firstCategory = document.getElementById("firstCategory");
-firstCategory.addEventListener("input", function() {
-  browser.storage.sync.set({
-    firstCustomSetting: firstCategory.value
-  });
-});
+function addCategory() {
+  //browser.storage.sync.set({firstCustomSetting: []});
+  console.log("ewewewew");
+  let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
+    console.log("lmao");
+    if(setting.firstCustomSetting == null) {
+      console.log("dude pls");
+      setting = [];
+    } else {
+      let midValue = setting.firstCustomSetting;
+      setting = midValue;
+    }
 
-var secondCategory = document.getElementById("secondCategory");
-secondCategory.addEventListener("input", function() {
-  browser.storage.sync.set({
-    secondCustomSetting: secondCategory.value
+    console.log(setting);
+
+    let newCat = document.getElementById("firstCategory").value;
+
+    console.log("puiuuu " + newCat);
+    if(setting.includes(newCat)) {
+      return
+    }
+    setting.push(newCat);
+
+    browser.storage.sync.set({
+      firstCustomSetting: setting
+    });
+    document.getElementById("firstCategory").value = "";
+    restoreFirstCustomCategory();
   });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('addBtn');
+    // onClick's logic below:
+    btn.addEventListener('click', function() {
+        addCategory();
+        browser.tabs.reload();
+    });
 });
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.addEventListener("DOMContentLoaded", restoreFirstCustomCategory);
-document.addEventListener("DOMContentLoaded", restoreSecondCustomCategory);

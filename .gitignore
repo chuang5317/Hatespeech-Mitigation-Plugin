@@ -21,3 +21,9 @@ machine-learning/cnn.h5
 .coverage
 package.json
 node_modules/
+machine-learning/modules/static
+machine-learning/modules/albert_base
+machine-learning/modules/albert_xxlarge
+machine-learning/AlbertModel
+machine-learning/modules/bert
+machine-learning/BertModel

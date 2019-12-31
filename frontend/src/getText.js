@@ -192,9 +192,10 @@ function detectHatespeech(root) {
       }
       // console.log(nodesToJson)
       // Fetch the ranges to blur from the locally running service
-      const response = fetchHatespeechInfo(str);
-      // console.log("here");
-      response
+      if(str.length > 0){
+        const response = fetchHatespeechInfo(str);
+        // console.log("here");
+        response
         .then(response => {
           if (!response.ok) {
             throw Error(response.statusText);
@@ -247,6 +248,7 @@ function detectHatespeech(root) {
         .catch(error => {
           console.log(error);
         });
+      }
     }
   }
   var getting = browser.storage.sync.get("HateSpeechOn");

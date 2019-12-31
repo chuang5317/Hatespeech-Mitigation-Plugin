@@ -1,19 +1,11 @@
 import dataset as ds
-import labelingFunctions as lf
-from snorkel.labeling import LabelModel, PandasLFApplier
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn import svm
-from sklearn.naive_bayes import GaussianNB
-import fasttext
 import random
-import nltk
-from nltk.corpus import wordnet as wn
-from snorkel.augmentation import transformation_function
 import pickle
 import pandas as pd
 
-def get_cnn_davison():
+def get_davison():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
     texts = original.iloc[:,6].tolist()
@@ -22,9 +14,25 @@ def get_cnn_davison():
     test = (texts[20000:], labels[20000:])
     return (train, test)
 
+def get_toxic():
+    addr = "./dataset/jigsaw-toxic-comment-classification-challenge/train.csv"
+    original = pd.read_csv(addr)
+    print(len(original))
+    texts = original.iloc[:,1].tolist()
+    separate = original.iloc[:,2:]
+    labels = []
+    for i in range(len(original)):
+        rowList = separate.iloc[i].tolist()
+        labels.append(1 if 1 in rowList else 0)
+    # print(labels)
+    train = (texts[:130000], labels[:130000])
+    test = (texts[130000:],  labels[130000:])
+    return (train, test)
+
+
 # Training a Classifier
 count_vec = CountVectorizer(ngram_range=(0, 1))
-train, test = get_cnn_davison()
+train, test = get_toxic()
 X_train = count_vec.fit_transform(train[0])
 
 # over

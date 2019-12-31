@@ -4,9 +4,8 @@ import re
 import pandas as pd
 from sklearn.metrics import f1_score
 
-model = tf.keras.models.load_model('cnn.h5')
+model = fasttext.load_model('ft.bin')
 dstest = ds.get_davison_test()
-
 
 ftrain = pd.DataFrame()
 ftrain[0] = list(map(lambda a : "__label__" + str(a),  dstest[0]))

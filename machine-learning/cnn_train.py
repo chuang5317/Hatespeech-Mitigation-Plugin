@@ -21,24 +21,8 @@ def get_cnn_davison():
     test = (texts[20000:],  labels[20000:])
     return (train, validation, test)
 
-# A better one, maybe
-def get_cnn_toxic():
-    addr = "./dataset/jigsaw-toxic-comment-classification-challenge/train.csv"
-    original = pd.read_csv(addr)
-    print(len(original))
-    texts = original.iloc[:,1].tolist()
-    separate = original.iloc[:,2:]
-    labels = []
-    for i in range(len(original)):
-        rowList = separate.iloc[i].tolist()
-        labels.append(1 if 1 in rowList else 0)
-    # print(labels)
-    train = (texts[:75000], labels[:75000])
-    validation = (texts[75000:130000], labels[75000:130000])
-    test = (texts[130000:],  labels[130000:])
-    return (train, validation, test)
-
-(train, validation, test) = get_cnn_toxic()
+# A more balanced dataset
+(train, validation, test) = ds.get_toxic()
 train_data = tf.data.Dataset.from_tensor_slices(train)
 test_data = tf.data.Dataset.from_tensor_slices(test)
 validation_data = tf.data.Dataset.from_tensor_slices(validation)

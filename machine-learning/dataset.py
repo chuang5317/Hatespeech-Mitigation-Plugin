@@ -61,3 +61,19 @@ def get_trac_test():
     texts = original.iloc[:,1]
     scores = original.iloc[:,2]
     return [scores, texts]
+
+def get_toxic():
+    addr = "./dataset/jigsaw-toxic-comment-classification-challenge/train.csv"
+    original = pd.read_csv(addr)
+    print(len(original))
+    texts = original.iloc[:,1].tolist()
+    separate = original.iloc[:,2:]
+    labels = []
+    for i in range(len(original)):
+        rowList = separate.iloc[i].tolist()
+        labels.append(1 if 1 in rowList else 0)
+    # print(labels)
+    train = (texts[:75000], labels[:75000])
+    validation = (texts[75000:130000], labels[75000:130000])
+    test = (texts[130000:],  labels[130000:])
+    return (train, validation, test)

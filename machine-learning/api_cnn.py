@@ -40,9 +40,9 @@ def detect(text):
     # print("paragraph is " + text)
     for s in doc.sents:
         n = len(s.text)
-        print("sentence is " + s.text)
+        # print("sentence is " + s.text)
         r = model.predict([s.text])
-        print("r is " + str(r))
+        # print("r is " + str(r))
         res = r[0][0]
         # print("res is " + str(res))
         if res >= 0.7: #threshold

@@ -1,14 +1,13 @@
 import pickle
-import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import f1_score
 import datetime
-import dataset as ds
+import ds_logistic as ds
 
 clf = pickle.load(open("./hate_speech_classifier", 'rb'))
 count_vec = pickle.load(open("./hate_speech_CountVectorizer", 'rb'))
 
-df_test = ds.get_toxic()[2]
+df_test = ds.get_merge()[1]
 y_true = df_test[1]
 y_pred = []
 a = datetime.datetime.now()

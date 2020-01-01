@@ -147,21 +147,21 @@ function walkNodeTree(root) {
 function fetchHatespeechInfo(data, callback) {
 	//We fetch the list here, we have to devise a way to send it to the
 	//server.
-	browser.storage.sync.get("firstCustomSetting", function(setting) {
+	// browser.storage.sync.get("firstCustomSetting", function(setting) {
 		const apiUrl = 'http://127.0.0.1:5000';
   		// const apiUrl =
   		//   "https://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/sentiment";
   		// TODO: Send list to server
-  		let fetchData = {
-    		method: "POST",
-    		body: JSON.stringify(data),
-    		headers: {
-      			"Content-Type": "text/plain"
-    		}
-  		};
-  		callback(fetch(apiUrl, fetchData));
-  		//return fetch(apiUrl, fetchData);
-	});
+    let fetchData = {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+          "Content-Type": "text/plain"
+      }
+    };
+  		// callback(fetch(apiUrl, fetchData));
+  	return fetch(apiUrl, fetchData);
+	// });
 }
 
 /**
@@ -191,6 +191,7 @@ function detectHatespeech(root) {
   function onGot(item) {
     if (item.HateSpeechOn) {
       const allText = walkNodeTree(root); //visit the dom
+      //block the root temporarily
       let str = "";
       for (let i = 0; i < allText.length; i++) {
         str = str + allText[i].nodeValue;

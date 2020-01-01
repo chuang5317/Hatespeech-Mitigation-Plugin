@@ -5,7 +5,6 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
 from sklearn.naive_bayes import GaussianNB
-import fasttext
 import random
 import nltk
 from nltk.corpus import wordnet as wn

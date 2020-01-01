@@ -16,7 +16,7 @@ def home():
         resp.headers['Content-Type'] = "application/json"
         return resp
 
-nlp = spacy.load('en_core_web_sm') 
+nlp = spacy.load('en_core_web_md') 
 clf = pickle.load(open("./hate_speech_classifier", 'rb'))
 count_vec = pickle.load(open("./hate_speech_CountVectorizer", 'rb'))
 
@@ -26,13 +26,15 @@ def detect(text):
     count = 0
     for s in doc.sents:
         n = len(s.text)
+        # print(s.text)
         trans = count_vec.transform([s.text])
         res = clf.predict(trans)
         # print(res)
-        if res == 1:
+        if res[0] == 1:
             # print(s)
             ret.append((count, count + n))
         count += n
+    print(ret)
     return ret
 
 def main():

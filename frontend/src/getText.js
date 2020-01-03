@@ -148,7 +148,7 @@ function fetchHatespeechInfo(data, callback) {
 	//We fetch the list here, we have to devise a way to send it to the
 	//server.
 	// browser.storage.sync.get("firstCustomSetting", function(setting) {
-		const apiUrl = 'http://127.0.0.1:5000';
+		const apiUrl = 'https://hatespeech1-7pf5lyxsqq-ew.a.run.app/';
   		// const apiUrl =
   		//   "https://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/sentiment";
   		// TODO: Send list to server
@@ -285,6 +285,7 @@ function injectBootstrapCSS() {
 // Note to self: DOMContentLoaded is when the initial HTML document is completely loaded and parsed,
 // WITHOUT waiting for stylesheets, images and subframes to finish loading, as opposed to the usual "load".
 document.addEventListener("DOMContentLoaded", event => {
+
   function onError(error) {
     console.log(`Error: ${error}`);
   }

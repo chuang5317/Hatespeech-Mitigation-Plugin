@@ -44,6 +44,59 @@ function restoreFirstCustomCategory() {
   firstCustomSetting.then(setCurrentCategory, onError);
 }
 
+function restoreWebsites() {
+  console.log("Restoring websites");
+    function setCurrentWebsite(item) {
+      let firstCategory = document.getElementById("websites_list");
+      firstCategory.innerHTML = "";
+      for(var i = 0; i < item.websites.length; i++) {
+        let li = document.createElement("li");
+        li.innerHTML = item.websites[i]  + " - ";
+
+        let deleteLink = document.createElement("a");
+        deleteLink.href = "#";
+        deleteLink.innerHTML = "X";
+        deleteLink.id = item.websites[i];
+
+        deleteLink.addEventListener("click", function() {
+          let elementToDelete = deleteLink.id;
+          deleteItem(elementToDelete);
+        });
+
+        li.appendChild(deleteLink);
+
+        firstCategory.appendChild(li);
+
+        document.getElementById("dood").innerHTML = tabInfo.url
+
+        //firstCategory.innerHTML =  firstCategory.innerHTML + "<li>" + item.firstCustomSetting[i] + "</li>";
+      }
+  }
+
+  function onGot(tabInfo) {
+    document.getElementById("dood").innerHTML = "But in the eeeend";
+    console.log("hola");
+    console.log(tabInfo);
+    console.log("bola");
+    document.getElementById("dood").innerHTML = tabInfo.url;
+    console.log(tabInfo.url);
+  }
+
+  function onError(error) {
+    console.log(`Error: ${error}`);
+  }
+
+  var gettingCurrent = browser.tabs.getCurrent();
+  gettingCurrent.then(onGot, onError);
+
+  function onError(error) {
+    console.log(`Error: ${error}`);
+  }
+
+  var firstCustomSetting = browser.storage.sync.get("firstCustomSetting");
+  firstCustomSetting.then(setCurrentWebsite, onError);
+}
+
 function deleteItem(item) {
   let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
     let settings = setting.firstCustomSetting;
@@ -107,3 +160,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.addEventListener("DOMContentLoaded", restoreFirstCustomCategory);
+document.addEventListener("DOMContentLoaded", restoreWebsites);
+
+function gotTab(tabInfo) {
+  console.log("d00d");
+  console.log(tabInfo);
+}
+
+function onError(error) {
+  console.log(`Error: ${error}`);
+}
+
+var gettingCurrent = browser.tabs.getCurrent();
+gettingCurrent.then(gotTab, onError);

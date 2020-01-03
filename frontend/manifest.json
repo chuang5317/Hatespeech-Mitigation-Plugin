@@ -15,7 +15,8 @@
     "*://127.0.0.1/*",
     "contextMenus",
     "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
-    "*://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech"
+    "*://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech",
+    "*://production.fm6pxzwu77.eu-west-2.elasticbeanstalk.com/*"
   ],
 
   "browser_action": {

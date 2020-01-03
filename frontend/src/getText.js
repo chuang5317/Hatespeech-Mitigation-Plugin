@@ -148,10 +148,8 @@ function fetchHatespeechInfo(data, callback) {
 	//We fetch the list here, we have to devise a way to send it to the
 	//server.
 	// browser.storage.sync.get("firstCustomSetting", function(setting) {
-		const apiUrl = 'http://127.0.0.1:5000';
-  		// const apiUrl =
-  		//   "https://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/sentiment";
-  		// TODO: Send list to server
+    const apiUrl = 'http://production.fm6pxzwu77.eu-west-2.elasticbeanstalk.com';
+      //'http://127.0.0.1:5000';
     let fetchData = {
       method: "POST",
       body: JSON.stringify(data),

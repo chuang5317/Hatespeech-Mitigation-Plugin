@@ -11,6 +11,7 @@
 
   "permissions": [
     "<all_urls>",
+    "tabs",
     "activeTab",
     "storage",
     "*://hatespeech1-7pf5lyxsqq-ew.a.run.app/*",

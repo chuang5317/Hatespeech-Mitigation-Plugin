@@ -76,7 +76,7 @@ function restoreWebsites() {
   function onGot(tabInfo) {
     document.getElementById("dood").innerHTML = "But in the eeeend";
     console.log("hola");
-    console.log(tabInfo);
+    //console.log(tabInfo);
     console.log("bola");
     document.getElementById("dood").innerHTML = tabInfo.url;
     console.log(tabInfo.url);

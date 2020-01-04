@@ -148,7 +148,7 @@ function fetchHatespeechInfo(data, callback) {
 	//We fetch the list here, we have to devise a way to send it to the
 	//server.
 	// browser.storage.sync.get("firstCustomSetting", function(setting) {
-		const apiUrl = 'https://hatespeech1-7pf5lyxsqq-ew.a.run.app/';
+		const apiUrl = "http://main.fm6pxzwu77.eu-west-2.elasticbeanstalk.com/";
   		// const apiUrl =
   		//   "https://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/sentiment";
   		// TODO: Send list to server
@@ -203,6 +203,7 @@ function detectHatespeech(root) {
         response
         .then(response => {
           if (!response.ok) {
+	    console.log(response);
             throw Error(response.statusText);
           }
           return response;

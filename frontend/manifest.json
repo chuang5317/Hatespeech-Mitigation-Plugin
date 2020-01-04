@@ -14,10 +14,11 @@
     "tabs",
     "activeTab",
     "storage",
-    "*://hatespeech1-7pf5lyxsqq-ew.a.run.app/*",
     "contextMenus",
-    "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
-    "*://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech"
+    "*://hatespeech1-7pf5lyxsqq-ew.a.run.app/",
+    "*://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech",
+    "*://main.fm6pxzwu77.eu-west-2.elasticbeanstalk.com/*",
+    "*://localhost:8081/*"
   ],
 
   "browser_action": {

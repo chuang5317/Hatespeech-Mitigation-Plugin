@@ -10,9 +10,11 @@
   },
 
   "permissions": [
+    "<all_urls>",
+    "tabs",
     "activeTab",
     "storage",
-    "*://127.0.0.1/*",
+    "*://hatespeech1-7pf5lyxsqq-ew.a.run.app/*",
     "contextMenus",
     "*://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/*",
     "*://mpymvmyfh0.execute-api.us-east-1.amazonaws.com/default/saveIncorrectHatespeech",

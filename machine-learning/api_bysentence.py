@@ -31,7 +31,7 @@ def detect(text):
         res = clf.predict(trans)
         # print(res)
         if res[0] == 1:
-            # print(s)
+            print(s)
             ret.append((count, count + n))
         count += n
     print(ret)

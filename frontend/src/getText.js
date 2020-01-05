@@ -149,20 +149,15 @@ function walkNodeTree(root) {
  * @returns - a Promise object that will contain a response object if successfull.
  */
 function fetchHatespeechInfo(data, callback) {
-	//We fetch the list here, we have to devise a way to send it to the
-	//server.
-	// browser.storage.sync.get("firstCustomSetting", function(setting) {
-		const apiUrl = 'http://127.0.0.1:5000/';
-    let fetchData = {
-      method: "POST",
-      body: data,
-      headers: {
-          "Content-Type": "text/plain"
-      }
-    };
-  		// callback(fetch(apiUrl, fetchData));
-  	return fetch(apiUrl, fetchData);
-	// });
+  const apiUrl = 'http://127.0.0.1:5000/';
+  let fetchData = {
+    method: "POST",
+    body: data,
+    headers: {
+        "Content-Type": "text/plain"
+    }
+  };
+  return fetch(apiUrl, fetchData);
 }
 
 /**
@@ -196,7 +191,6 @@ function detectHatespeech(root) {
       for (let i = 0; i < allText.length; i++) {
         str = str + allText[i].nodeValue;
       }
-      console.log(str.length);
       // Fetch the ranges to blur from the running service
       if(str.length > 0){
         const response = fetchHatespeechInfo(str);
@@ -208,44 +202,49 @@ function detectHatespeech(root) {
           return response;
         })
         .then(response => {
+          //Travel through the nodes and find the positions that hatespeech appears
           response.json().then(result => {
             pos = 0;
             hateSpeechIndex = 0;
             i = 0;
             for (i = 0; i < allText.length && hateSpeechIndex < result.length; i++) {
-              oldPos = pos;
-              pos += allText[i].nodeValue.length;
-              // console.log(pos);
+              oldPos = pos; //the starting position of the node
+              pos += allText[i].nodeValue.length; //the end position of the node
+              //skipping the previous hatespeech
               while (oldPos >= result[hateSpeechIndex][1]) {
                 hateSpeechIndex++;
               }
-              start = result[hateSpeechIndex][0];
+              start = result[hateSpeechIndex][0]; //start of the current hatespeech
+              //if this node conatins multiple hatespeech, treat them as one
               while (pos > result[hateSpeechIndex][1]){
                 hateSpeechIndex++;
               }
-              end = result[hateSpeechIndex][1];
-              lower = Math.max(start - oldPos, 0);
-              upper = Math.min(end - oldPos, allText[i].length);
-              // console.log("index " + hateSpeechIndex + " " + allText[i].nodeValue + " lower " + lower + " upper " + upper + " start " + start + " oldpos " + oldPos + " pos " + pos);
-              // console.log("text at pos is " + str.substr(oldPos, allText[i].nodeValue.length));
-              nodeValue = allText[i].nodeValue;
-              curText = nodeValue.substr(lower, upper);
-              if(curText.length > 0){
-                prevText = nodeValue.substr(0, lower);
-                afterText = nodeValue.substr(upper, allText[i].length);
-                parentNode = allText[i].parentNode;
-                nextNode = allText[i].nextSibling;
-                allText[i].remove();
-                if (prevText.length > 0) {
+              end = result[hateSpeechIndex][1]; //the end of the hatespeech
+              lower = Math.max(start - oldPos, 0); //the lower index of the hatespeech in this node
+              upper = Math.min(end - oldPos, allText[i].length);//upper
+              nodeValue = allText[i].nodeValue; //text in the node
+              curText = nodeValue.substr(lower, upper); //the part to blur
+              if(curText.length > 0){ // if there are nothing to blur, don't change anything
+                prevText = nodeValue.substr(0, lower); //text before blur
+                afterText = nodeValue.substr(upper, allText[i].length); //text after blur
+                parentNode = allText[i].parentNode; //the parent of the original text node
+                nextNode = allText[i].nextSibling; // the node after the original node
+                allText[i].remove(); //remove the original node in the DOM tree
+                
+                if (prevText.length > 0) {// if there is text before the blur text, insert it
                   prevNode = document.createTextNode(prevText);
                   prevNode.updated = true;
                   parentNode.insertBefore(prevNode, nextNode);
                 }
+
+                //insert the blur text
                 blurNode = document.createElement("span");
                 blurNode.appendChild(document.createTextNode(curText));
                 blurNode.updated = true;
                 blurNode.classList.add('blurry-text');
                 parentNode.insertBefore(blurNode, nextNode);
+
+                // if there is text after the blur text, insert it
                 if (afterText.length > 0) {
                   afterNode = document.createTextNode(afterText);
                   afterNode.updated = true;

@@ -22,7 +22,6 @@ count_vec = pickle.load(open("./hate_speech_CountVectorizer", 'rb'))
 
 def detect(text):
     ret = []
-    print("detecting text length: " + str(len(text)))
     doc = nlp(text)
     count = 0
     for s in doc.sents:
@@ -30,14 +29,10 @@ def detect(text):
         trans = count_vec.transform([s.text])
         res = clf.predict(trans)
         if res[0] == 1:
-            print(s)
-            old_count = count
-            count = text.find(s.text, count)
-            # print((count, count + n))
-            # print(text[count: count + n])
+            # print(s)
+            count = text.find(s.text, count) #spacy skips spaces and returns
             ret.append((count, count + n))
         count += n
-    print(ret)
     return ret
 
 def main():

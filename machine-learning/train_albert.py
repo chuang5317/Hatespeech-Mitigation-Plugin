@@ -69,7 +69,7 @@ def create_tokenizer_from_hub_module():
     do_lower_case = True
       
   return tokenization.FullTokenizer(
-      vocab_file=vocab_file, do_lower_case=do_lower_case)
+      vocab_file=vocab_file, do_lower_case=do_lower_case, spm_model_file='./modules/albert_xxlarge/assets/30k-clean.model')
 
 tokenizer = create_tokenizer_from_hub_module()
 

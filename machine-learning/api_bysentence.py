@@ -26,12 +26,13 @@ def detect(text):
     count = 0
     for s in doc.sents:
         n = len(s.text)
-        # print(s.text)
         trans = count_vec.transform([s.text])
         res = clf.predict(trans)
         # print(res)
         if res[0] == 1:
-            # print(s)
+            print(s)
+            count = text.find(s.text, count)
+            print((count, count + n))
             ret.append((count, count + n))
         count += n
     print(ret)

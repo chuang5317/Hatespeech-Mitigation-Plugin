@@ -88,12 +88,16 @@ function onNewContentAdded(mutations) {
   mutations.forEach(mutation => {
     // Need to recursively assign new text node IDs.
     for (let node of mutation.addedNodes) {
-      populateNodeManager(node);
+      if(node.updated != true){
+        populateNodeManager(node);
+      }
     }
 
     // Then run hate speech detection.
     for (let node of mutation.addedNodes) {
-      detectHatespeech(node);
+      if(node.updated != true){
+        detectHatespeech(node);
+      }
     }
   });
 }
@@ -148,10 +152,10 @@ function fetchHatespeechInfo(data, callback) {
 	//We fetch the list here, we have to devise a way to send it to the
 	//server.
 	// browser.storage.sync.get("firstCustomSetting", function(setting) {
-		const apiUrl = "http://main.fm6pxzwu77.eu-west-2.elasticbeanstalk.com/";
   		// const apiUrl =
   		//   "https://jmxk0e6pqd.execute-api.eu-west-2.amazonaws.com/Production/sentiment";
   		// TODO: Send list to server
+		const apiUrl = 'http://127.0.0.1:5000/';
     let fetchData = {
       method: "POST",
       body: JSON.stringify(data),
@@ -196,6 +200,7 @@ function detectHatespeech(root) {
       for (let i = 0; i < allText.length; i++) {
         str = str + allText[i].nodeValue;
       }
+      // console.log(str);
       // console.log(nodesToJson)
       // Fetch the ranges to blur from the locally running service
       if(str.length > 0){
@@ -216,37 +221,40 @@ function detectHatespeech(root) {
             for (i = 0; i < allText.length; i++) {
               oldPos = pos;
               pos += allText[i].length;
-              start = result[hateSpeechIndex][0]
-              while (pos > result[hateSpeechIndex][0]) {
+              while (oldPos > result[hateSpeechIndex][1]) {
+                hateSpeechIndex++;
+              }
+              start = result[hateSpeechIndex][0];
+              while (pos > result[hateSpeechIndex][1]){
                 hateSpeechIndex++;
               }
               end = result[hateSpeechIndex][1];
-              if (pos >= start && pos <= end) {
-                textNodePosInParent = getChildNodeIndex(allText[i]);
-                lower = Math.max(start - oldPos, 0);
-                upper = Math.min(end - oldPos, allText[i].length);
-                nodeValue = allText[i].nodeValue;
+              lower = Math.max(start - oldPos, 0);
+              upper = Math.min(end - oldPos, allText[i].length);
+              console.log("index " + hateSpeechIndex + " " + allText[i].nodeValue + " lower " + lower + " upper " + upper + " start " + start +  " oldpos " + oldPos + " pos " + pos);
+              nodeValue = allText[i].nodeValue;
+              curText = nodeValue.substr(lower, upper);
+              if(curText.length > 0){
                 prevText = nodeValue.substr(0, lower);
-                curText = nodeValue.substr(lower, upper);
                 afterText = nodeValue.substr(upper, allText[i].length);
                 parentNode = allText[i].parentNode;
                 nextNode = allText[i].nextSibling;
                 allText[i].remove();
                 if (prevText.length > 0) {
                   prevNode = document.createTextNode(prevText);
+                  prevNode.updated = true;
                   parentNode.insertBefore(prevNode, nextNode);
                 }
                 blurNode = document.createElement("span");
                 blurNode.appendChild(document.createTextNode(curText));
+                blurNode.updated = true;
                 blurNode.classList.add('blurry-text');
                 parentNode.insertBefore(blurNode, nextNode);
                 if (afterText.length > 0) {
                   afterNode = document.createTextNode(afterText);
+                  afterNode.updated = true;
                   parentNode.insertBefore(afterNode, nextNode);
                 }
-              }
-              if (hateSpeechIndex >= result.length) {
-                break;
               }
             }
           });

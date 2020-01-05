@@ -173,6 +173,21 @@ function blurNode(textNode) {
   textNode.parentNode.classList.add("blurry-text");
 }
 
+/**
+ *
+ * @param str - passed in from detectHatespeech
+ *        categories - key words that the user wants to block
+ */
+
+function blurUserWords(str, categories){
+  for (var i = 0; i < str.length; i++){
+    if (categories.includes(str[i])){
+      //Block the sentence with the hatespeech here
+    }
+  }
+}
+
+
 function getChildNodeIndex(child) {
   var i = 0;
   while ((child = child.previousSibling) != null)
@@ -201,6 +216,7 @@ function detectHatespeech(root) {
       // console.log(nodesToJson)
       // Fetch the ranges to blur from the locally running service
       if(str.length > 0){
+        //blurUserWords()
         const response = fetchHatespeechInfo(str);
         response
         .then(response => {

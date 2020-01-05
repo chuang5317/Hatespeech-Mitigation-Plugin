@@ -1,0 +1,13 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "mhoare/hatespeech:simple",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "8081"
+    }
+  ],
+  "Logging": "/var/log/nginx"
+}

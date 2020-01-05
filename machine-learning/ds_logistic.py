@@ -1,4 +1,39 @@
 import pandas as pd
+from boto3 import resource
+from boto3.dynamodb.conditions import Key
+
+# The boto3 dynamoDB resource
+dynamodb_resource = resource('dynamodb', region_name='us-east-1')
+
+def scan_table_allpages(table_name, filter_key=None, filter_value=None):
+    """
+    Perform a scan operation on table.
+    Can specify filter_key (col name) and its value to be filtered.
+    This gets all pages of results. Returns list of items.
+    """
+    table = dynamodb_resource.Table(table_name)
+
+    if filter_key and filter_value:
+        filtering_exp = Key(filter_key).eq(filter_value)
+        response = table.scan(FilterExpression=filtering_exp)
+    else:
+        response = table.scan()
+
+    items = response['Items']
+    while True:
+        if response.get('LastEvaluatedKey'):
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items += response['Items']
+        else:
+            break
+
+    return items
+
+def get_dynamo():
+    items = scan_table_allpages("Hatespeech_incorrect_labels")
+    train = ([item["sentence"] for item in items], list(map(lambda x: 0 if x == "Non-offensive" else 1, [item["label"] for item in items])))
+    return train
+
 def get_davison():
     addr = "./dataset/davison.csv"
     original = pd.read_csv(addr)
@@ -29,6 +64,7 @@ def get_merge():
     (dtesttext, dtestscore) = dtest
     (ttraintext, ttrainscore) = ttrain
     (ttesttext, ttestscore) = ttest
-    train = ((dtraintext + ttraintext), (dtrainscore + ttrainscore))
+    dbtext, dbscore = get_dynamo()
+    train = ((dtraintext + ttraintext + dbtext), (dtrainscore + ttrainscore + dbscore))
     test = ((dtesttext + ttesttext), (dtestscore + ttestscore))
     return (train, test)

@@ -75,9 +75,9 @@ function restoreWebsites() {
 
   function onGot(tabInfo) {
     document.getElementById("dood").innerHTML = "But in the eeeend";
-    console.log("hola");
-    //console.log(tabInfo);
-    console.log("bola");
+    // console.log("hola");
+    console.log(tabInfo);
+    // console.log("bola");
     document.getElementById("dood").innerHTML = tabInfo.url;
     console.log(tabInfo.url);
   }
@@ -137,7 +137,7 @@ function addCategory() {
 
     let newCat = document.getElementById("firstCategory").value;
 
-    console.log("puiuuu " + newCat);
+    console.log("Category added: " + newCat);
     if (setting.includes(newCat)) {
       return;
     }
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", restoreFirstCustomCategory);
 document.addEventListener("DOMContentLoaded", restoreWebsites);
 
 function gotTab(tabInfo) {
-  console.log("d00d");
+  // console.log("d00d");
   console.log(tabInfo);
 }
 

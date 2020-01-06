@@ -149,7 +149,7 @@ function walkNodeTree(root) {
  * @returns - a Promise object that will contain a response object if successfull.
  */
 function fetchHatespeechInfo(data, callback) {
-  const apiUrl = 'http://127.0.0.1:5000/';
+  const apiUrl = 'http://main.fm6pxzwu77.eu-west-2.elasticbeanstalk.com/';
   let fetchData = {
     method: "POST",
     body: data,

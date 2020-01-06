@@ -5,6 +5,7 @@
  * @param node - the node to test
  * @return - True if all of the text content of `node` is whitespace, otherwise false.
  */
+
 function isAllWhiteSpace(node) {
   // Use ECMA-262 Edition 3 String and RegExp features
   return !/[^\t\n\r ]/.test(node.textContent);
@@ -187,7 +188,6 @@ function blurUserWords(str, categories){
   }
 }
 
-
 function getChildNodeIndex(child) {
   var i = 0;
   while ((child = child.previousSibling) != null)
@@ -210,13 +210,16 @@ function detectHatespeech(root) {
       //block the root temporarily
       let str = "";
       for (let i = 0; i < allText.length; i++) {
-        str = str + allText[i].nodeValue;
+        let new_str = allText[i].nodeValue;
+        if ()
+        str = str + new_str;
       }
-      // console.log(str);
+      //console.log(str);
       // console.log(nodesToJson)
       // Fetch the ranges to blur from the locally running service
       if(str.length > 0){
         //blurUserWords()
+
         const response = fetchHatespeechInfo(str);
         response
         .then(response => {

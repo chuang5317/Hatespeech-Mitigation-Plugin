@@ -120,7 +120,7 @@ checkbox.addEventListener("change", function() {
   browser.tabs.reload();
 });
 
-function addCategory() {
+function addKeyword() {
   //browser.storage.sync.set({firstCustomSetting: []});
   let existingCats = browser.storage.sync.get("firstCustomSetting", function(
     setting
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var btn = document.getElementById("addBtn");
   // onClick's logic below:
   btn.addEventListener("click", function() {
-    addCategory();
+    addKeyword();
     browser.tabs.reload();
   });
 });

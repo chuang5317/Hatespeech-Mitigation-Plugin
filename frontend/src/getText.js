@@ -175,6 +175,10 @@ function getChildNodeIndex(child) {
   return i;
 }
 
+function hasKeyword(keyword, sentence) {
+    return sentence.indexOf(keyword.toLowerCase()) > -1;
+}
+
 /**
  * Run hate speech checking over the DOM Tree.
  * @param root - DOM root node
@@ -189,8 +193,25 @@ function detectHatespeech(root) {
       const allText = walkNodeTree(root); //visit the dom
       let str = "";
       for (let i = 0; i < allText.length; i++) {
-        str = str + allText[i].nodeValue;
+        let new_str = allText[i].nodeValue;
+        for (let j = 0; j < keywords.length; j++){
+          if (hasKeyword(keywords[j], new_str)) {
+          nodeValue = allText[i].nodeValue;
+          nextNode = allText[i].nextSibling;
+          allText[i].remove();
+
+          blurNode = document.createElement("span");
+          blurNode.appendChild(document.createTextNode(curText));
+          blurNode.updated = true;
+          blurNode.classList.add('blurry-text');
+          parentNode.insertBefore(blurNode, nextNode);
+          }
+        }
+        str = str + new_str;
       }
+
+
+
       // Fetch the ranges to blur from the running service
       if(str.length > 0){
         const response = fetchHatespeechInfo(str);

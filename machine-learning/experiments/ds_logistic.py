@@ -28,7 +28,17 @@ def get_merge():
     (dtraintext, dtrainscore) = dtrain
     (dtesttext, dtestscore) = dtest
     (ttraintext, ttrainscore) = ttrain
-    (ttesttext, ttestscore) = ttest
+    (ttesttext, ttestscore) =ttest
     train = ((dtraintext + ttraintext), (dtrainscore + ttrainscore))
     test = ((dtesttext + ttesttext), (dtestscore + ttestscore))
     return (train, test)
+
+def get_trac_test():
+    addr = "./dataset/agr_en_dev.csv"
+    original = pd.read_csv(addr)
+    texts = original.iloc[:,1]
+    scores = original.iloc[:,2]
+    print(scores)
+    scores = list(map(lambda x : 0 if x == "NAG" else 1, scores))
+    print(scores)
+    return (texts, scores)

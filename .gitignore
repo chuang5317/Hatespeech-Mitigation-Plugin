@@ -27,3 +27,5 @@ machine-learning/modules/albert_xxlarge
 machine-learning/AlbertModel
 machine-learning/modules/bert
 machine-learning/BertModel
+machine-learning/experiments/hate_speech_classifier
+machine-learning/experiments/hate_speech_CountVectorizer

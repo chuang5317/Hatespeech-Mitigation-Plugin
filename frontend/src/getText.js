@@ -209,9 +209,7 @@ function detectHatespeech(root) {
         }
         str = str + new_str;
       }
-
-
-
+      
       // Fetch the ranges to blur from the running service
       if(str.length > 0){
         const response = fetchHatespeechInfo(str);

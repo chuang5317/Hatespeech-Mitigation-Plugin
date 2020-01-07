@@ -14,9 +14,9 @@ function restoreFirstCustomCategory() {
   function setCurrentCategory(item) {
     let firstCategory = document.getElementById("cats_list");
     firstCategory.innerHTML = "";
-    for(var i = 0; i < item.firstCustomSetting.length; i++) {
+    for (var i = 0; i < item.firstCustomSetting.length; i++) {
       let li = document.createElement("li");
-      li.innerHTML = item.firstCustomSetting[i]  + " - ";
+      li.innerHTML = item.firstCustomSetting[i] + " - ";
 
       let deleteLink = document.createElement("a");
       deleteLink.href = "#";
@@ -46,38 +46,38 @@ function restoreFirstCustomCategory() {
 
 function restoreWebsites() {
   console.log("Restoring websites");
-    function setCurrentWebsite(item) {
-      let firstCategory = document.getElementById("websites_list");
-      firstCategory.innerHTML = "";
-      for(var i = 0; i < item.websites.length; i++) {
-        let li = document.createElement("li");
-        li.innerHTML = item.websites[i]  + " - ";
+  function setCurrentWebsite(item) {
+    let firstCategory = document.getElementById("websites_list");
+    firstCategory.innerHTML = "";
+    for (var i = 0; i < item.websites.length; i++) {
+      let li = document.createElement("li");
+      li.innerHTML = item.websites[i] + " - ";
 
-        let deleteLink = document.createElement("a");
-        deleteLink.href = "#";
-        deleteLink.innerHTML = "X";
-        deleteLink.id = item.websites[i];
+      let deleteLink = document.createElement("a");
+      deleteLink.href = "#";
+      deleteLink.innerHTML = "X";
+      deleteLink.id = item.websites[i];
 
-        deleteLink.addEventListener("click", function() {
-          let elementToDelete = deleteLink.id;
-          deleteItem(elementToDelete);
-        });
+      deleteLink.addEventListener("click", function() {
+        let elementToDelete = deleteLink.id;
+        deleteItem(elementToDelete);
+      });
 
-        li.appendChild(deleteLink);
+      li.appendChild(deleteLink);
 
-        firstCategory.appendChild(li);
+      firstCategory.appendChild(li);
 
-        document.getElementById("dood").innerHTML = tabInfo.url
+      document.getElementById("dood").innerHTML = tabInfo.url;
 
-        //firstCategory.innerHTML =  firstCategory.innerHTML + "<li>" + item.firstCustomSetting[i] + "</li>";
-      }
+      //firstCategory.innerHTML =  firstCategory.innerHTML + "<li>" + item.firstCustomSetting[i] + "</li>";
+    }
   }
 
   function onGot(tabInfo) {
     document.getElementById("dood").innerHTML = "But in the eeeend";
-    console.log("hola");
-    //console.log(tabInfo);
-    console.log("bola");
+    // console.log("hola");
+    console.log(tabInfo);
+    // console.log("bola");
     document.getElementById("dood").innerHTML = tabInfo.url;
     console.log(tabInfo.url);
   }
@@ -98,7 +98,9 @@ function restoreWebsites() {
 }
 
 function deleteItem(item) {
-  let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
+  let existingCats = browser.storage.sync.get("firstCustomSetting", function(
+    setting
+  ) {
     let settings = setting.firstCustomSetting;
     let newSettings = settings.filter(set => item != set);
     browser.storage.sync.set({
@@ -118,13 +120,13 @@ checkbox.addEventListener("change", function() {
   browser.tabs.reload();
 });
 
-function addCategory() {
+function addKeyword() {
   //browser.storage.sync.set({firstCustomSetting: []});
-  console.log("ewewewew");
-  let existingCats = browser.storage.sync.get("firstCustomSetting", function(setting) {
-    console.log("lmao");
-    if(setting.firstCustomSetting == null) {
-      console.log("dude pls");
+  let existingCats = browser.storage.sync.get("firstCustomSetting", function(
+    setting
+  ) {
+    if (setting.firstCustomSetting == null) {
+      console.log("We shouldn't get here...");
       setting = [];
     } else {
       let midValue = setting.firstCustomSetting;
@@ -135,9 +137,9 @@ function addCategory() {
 
     let newCat = document.getElementById("firstCategory").value;
 
-    console.log("puiuuu " + newCat);
-    if(setting.includes(newCat)) {
-      return
+    console.log("Category added: " + newCat);
+    if (setting.includes(newCat)) {
+      return;
     }
     setting.push(newCat);
 
@@ -149,13 +151,13 @@ function addCategory() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('addBtn');
-    // onClick's logic below:
-    btn.addEventListener('click', function() {
-        addCategory();
-        browser.tabs.reload();
-    });
+document.addEventListener("DOMContentLoaded", function() {
+  var btn = document.getElementById("addBtn");
+  // onClick's logic below:
+  btn.addEventListener("click", function() {
+    addKeyword();
+    browser.tabs.reload();
+  });
 });
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
@@ -163,7 +165,7 @@ document.addEventListener("DOMContentLoaded", restoreFirstCustomCategory);
 document.addEventListener("DOMContentLoaded", restoreWebsites);
 
 function gotTab(tabInfo) {
-  console.log("d00d");
+  // console.log("d00d");
   console.log(tabInfo);
 }
 

@@ -321,11 +321,11 @@ document.addEventListener("DOMContentLoaded", event => {
     var style = document.createElement("style");
     style.type = "text/css";
     if (item.RevealOnHover) {
-      style.innerHTML = ".blurry-text {\nfilter:blur(5px);\n}\n";
+      style.innerHTML = ".blurry-text {\nfilter:blur(5px);\n}\n" +
+      ".blurry-text:hover {\nfilter:none;\n}";
+
     } else {
-      style.innerHTML =
-        ".blurry-text {\nfilter:blur(5px);\n}\n" +
-        ".blurry-text:hover {\nfilter:none;\n}";
+      style.innerHTML = ".blurry-text {\nfilter:blur(5px);\n}\n";
     }
     document.getElementsByTagName("head")[0].appendChild(style);
     injectBootstrapCSS();
